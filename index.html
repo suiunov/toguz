@@ -208,7 +208,9 @@ details{border:1px solid rgba(255,255,255,.08)}
 .rules{margin:6px 0 0;padding-inline-start:22px}.rules li{margin:0 0 12px;color:var(--soft);line-height:1.5}.rules b{color:var(--ink)}
 .aboutArt{width:96px;height:96px;display:block;margin:12px auto 4px;border-radius:22px;background:#8c1c24}
 #aboutTxt{color:var(--soft);line-height:1.55;text-align:center}
-.ctrl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.ctrl{display:flex;justify-content:center}
+.ctrl:has(#undoBtn[hidden]){display:none}
+.ctrl button.b{max-width:260px}
 .ctrl button.b{width:100%}
 @media(prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
 </style>
@@ -245,7 +247,6 @@ details{border:1px solid rgba(255,255,255,.08)}
 </div>
 <div class="ctrl">
   <button class="b" id="undoBtn" data-t="undo"></button>
-  <button class="b main" id="newBtn" data-t="newGame"></button>
 </div>
 </div>
 
@@ -276,7 +277,7 @@ details{border:1px solid rgba(255,255,255,.08)}
     <div class="lbl" data-t="language"></div>
     <div class="seg" id="segLang"><button data-v="ky">Кыргызча</button><button data-v="en">English</button></div>
     <div class="lbl" data-t="animation"></div>
-    <div class="seg" id="segAnim"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
+    <div class="seg" id="segAnim"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button></div>
     <div class="lbl" data-t="taskProgress"></div>
     <button class="mi" id="mReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-t="resetProgress"></span><em id="resetNote"></em></button>
   </div>
@@ -293,7 +294,9 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}ca
 let S,hist=[],busy=false,last=-1,land=-1,timer=null;
 let mode=store.get('tk-mode','ai'),level=+store.get('tk-level',4),spd=+store.get('tk-spd2',1);
 let lang=store.get('tk-lang',(navigator.language||'').startsWith('ky')||(navigator.language||'').startsWith('ru')?'ky':(navigator.language||'').startsWith('en')?'en':'ky');
-let anim=store.get('tk-anim','1')==='1';
+let anim=+store.get('tk-anim2','1');if(!(anim>=0&&anim<=3))anim=1;
+/* own-move animation: [min ms, max ms, total ms budget, pause before computer] */
+const ANIM=[null,[260,420,4500,1100],[160,280,3000,800],[60,120,1500,450]];
 if(!['ai','2p','cc'].includes(mode))mode='ai';
 
 /* ---------- texts ---------- */
@@ -301,7 +304,7 @@ const TX={
 ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
   speeds:['Өтө жай','Жай','Орто','Тез'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор'},
   menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
-  language:'Тил',animation:'Анимация',on:'Күйүк',off:'Өчүк',taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
+  language:'Тил',animation:'Анимация',anims:['Өчүк','Жай','Орто','Тез'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
   you:'Сиз',computer:'Компьютер',opponent:'Каршылаш',player:n=>`${n}-оюнчу`,comp:n=>`Компьютер ${n}`,
   winner:'Жеңүүчү',draw:'Тең',waiting:'Күтүүдө',paused:'Тыным',thinking:'Ойлонууда…',yourTurn:'Сиздин кезегиңиз',turn:'Кезек',taskSt:'Тапшырма',
   played:(h,y)=>`${h}-үйдөн жүрдү${y?'ңүз':''}.`,took:(n,y)=>`${n} коргоол ${y?'алдыңыз':'алды'}!`,tuzT:(h,y)=>`Туздук ${y?'алдыңыз':'алды'} (${h}-үй)!`,
@@ -333,7 +336,7 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
 en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
   speeds:['Very slow','Slow','Normal','Fast'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard'},
   menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
-  language:'Language',animation:'Animation',on:'On',off:'Off',taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
+  language:'Language',animation:'Animation',anims:['Off','Slow','Normal','Fast'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
   you:'You',computer:'Computer',opponent:'Opponent',player:n=>`Player ${n}`,comp:n=>`Computer ${n}`,
   winner:'Winner',draw:'Draw',waiting:'Waiting',paused:'Paused',thinking:'Thinking…',yourTurn:'Your turn',turn:'Turn',taskSt:'Task',
   played:(h,y)=>`Played hole ${h}.`,took:(n,y)=>`Took ${n}!`,tuzT:(h,y)=>`Tuzdyk on hole ${h}!`,
@@ -455,7 +458,7 @@ function render(){
 function say(p,html){for(const q of [0,1]){const b=$('bub'+q);
   if(p==null){b.innerHTML='';b.classList.remove('old');continue}
   if(q===p){b.innerHTML=html;b.classList.remove('old','pop');void b.offsetWidth;b.classList.add('pop')}else b.classList.add('old')}}
-function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,mode==='cc'?SPEEDS[spd][1]:450)}
+function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,mode==='cc'?SPEEDS[spd][1]:(ANIM[anim]?ANIM[anim][3]:450))}
 
 function doMove(i){
   if(busy||S.over)return;
@@ -471,8 +474,8 @@ function doMove(i){
     if(S.over)return showOver();
     schedAI();
   };
-  if(reduced||!anim){done();return}
-  const step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(30,Math.min(110,1500/frames.length));let f=0;
+  if(reduced||(!anim&&!(mode==='cc'&&!tut))){done();return}
+  const A=ANIM[anim]||ANIM[2],step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(A[0],Math.min(A[1],A[2]/frames.length));let f=0;
   const tick=()=>{if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();timer=setTimeout(tick,step)}else done()};
   tick();
 }
@@ -540,7 +543,7 @@ function applyLang(){const t=T();document.documentElement.lang=lang;document.tit
   [...$('speed').options].forEach((o,i)=>o.textContent=t.speeds[i]);
   $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
-  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segAnim',anim?1:0);
+  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segAnim',anim);document.querySelectorAll('#segAnim button').forEach(b=>b.textContent=t.anims[+b.dataset.v]);
   $('levelBox').hidden=mode==='2p';
   if($('drawer').classList.contains('show'))showView(view);
   if(tut)showTut();render()}
@@ -552,12 +555,12 @@ $('mTasks').onclick=()=>{closeMenu();startTask(0)};
 $('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
 $('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
 $('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
-$('segAnim').onclick=e=>{const b=e.target.closest('button');if(!b)return;anim=b.dataset.v==='1';store.set('tk-anim',anim?'1':'0');applyLang()};
+$('segAnim').onclick=e=>{const b=e.target.closest('button');if(!b)return;anim=+b.dataset.v;store.set('tk-anim2',anim);applyLang()};
 $('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone};
 
 /* ---------- controls ---------- */
 $('board').addEventListener('click',e=>{const h=e.target.closest('.hole.can');if(h)doMove(+h.dataset.i)});
-$('newBtn').onclick=newGame;$('again').onclick=newGame;$('newTop').onclick=newGame;
+$('again').onclick=newGame;$('newTop').onclick=newGame;
 $('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;clearTimeout(timer);
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
   last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
