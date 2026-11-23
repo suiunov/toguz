@@ -208,6 +208,11 @@ details{border:1px solid rgba(255,255,255,.08)}
 .rules{margin:6px 0 0;padding-inline-start:22px}.rules li{margin:0 0 12px;color:var(--soft);line-height:1.5}.rules b{color:var(--ink)}
 .aboutArt{width:96px;height:96px;display:block;margin:12px auto 4px;border-radius:22px;background:#8c1c24}
 #aboutTxt{color:var(--soft);line-height:1.55;text-align:center}
+.appbar{grid-template-columns:96px minmax(0,1fr) 96px!important}
+.abl{display:flex;justify-content:flex-start}.abr{display:flex;justify-content:flex-end;gap:8px}
+#playTop{background:rgba(244,194,71,.9);color:#3b1d05}
+#playTop .i-play,#playTop.paused .i-pause{display:none}#playTop.paused .i-play{display:block}
+#segSpeed button{font-size:14px;padding:0 4px}
 .ctrl{display:flex;justify-content:center}
 .ctrl:has(#undoBtn[hidden]){display:none}
 .ctrl button.b{max-width:260px}
@@ -217,9 +222,9 @@ details{border:1px solid rgba(255,255,255,.08)}
 </head>
 <body>
 <div class="appbar">
-  <button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <div class="abl"><button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   <div class="ttl"><b data-t="title"></b><small id="modeLbl"></small></div>
-  <button class="ib" id="newTop" aria-label="New game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button>
+  <div class="abr"><button class="ib" id="playTop" hidden aria-label="Pause"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z"/></svg></button><button class="ib" id="newTop" aria-label="New game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button></div>
 </div>
 <div class="wrap">
 <div class="bubbles" aria-live="polite"><div class="bub" id="bub1"></div><div class="bub r" id="bub0"></div></div>
@@ -239,10 +244,6 @@ details{border:1px solid rgba(255,255,255,.08)}
   </div>
   <div class="row" id="bot"></div>
   <div class="row nums" id="botNums"></div>
-</div>
-<div class="ccbar" id="ccbar" hidden>
-  <button class="b main" id="playBtn"></button>
-  <label><span data-t="speed"></span> <select id="speed"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option></select></label>
 </div>
 <div class="ctrl">
   <button class="b" id="undoBtn" data-t="undo"></button>
@@ -264,6 +265,8 @@ details{border:1px solid rgba(255,255,255,.08)}
     <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="cc"></button></div>
     <div id="levelBox"><div class="lbl" data-t="level"></div>
     <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button></div></div>
+    <div id="speedBox"><div class="lbl" data-t="speed"></div>
+    <div class="seg" id="segSpeed"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button></div></div>
     <div class="sep"></div>
     <button class="mi" id="mTasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg><span data-t="tasks"></span><em id="taskProg"></em></button>
     <button class="mi" data-go="rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10l4 4v12H5z M9 12h6M9 16h6M9 8h3"/></svg><span data-t="rules"></span></button>
@@ -448,8 +451,8 @@ function render(){
     $('pn'+p).textContent=nm[p];$('pst'+p).textContent=stTxt(p);
     $('pl'+p).classList.toggle('on',tut?p===0:!S.over&&S.turn===p||(S.over&&S.over.w===p))}
   $('undoBtn').disabled=busy||hist.length===0||!!tut;
-  $('undoBtn').hidden=mode==='cc';$('ccbar').hidden=mode!=='cc'||!!tut;
-  $('playBtn').textContent=paused?t.play:t.pause;
+  $('undoBtn').hidden=mode==='cc';$('playTop').hidden=mode!=='cc'||!!tut;
+  $('playTop').classList.toggle('paused',paused);$('playTop').setAttribute('aria-label',paused?t.play:t.pause);
   const dim=!S.over&&!tut;
   $('top').classList.toggle('idle',dim&&S.turn!==1);$('bot').classList.toggle('idle',dim&&S.turn!==0);
   $('modeLbl').textContent=tut?t.tasks:t.modes[mode]+(mode==='2p'?'':' · '+t.levels[level]);
@@ -540,7 +543,7 @@ function applyLang(){const t=T();document.documentElement.lang=lang;document.tit
   document.querySelectorAll('[data-t]').forEach(e=>{const v=t[e.dataset.t];if(typeof v==='string')e.textContent=v});
   document.querySelectorAll('#segMode button').forEach(b=>b.textContent=t.modes[b.dataset.v]);
   document.querySelectorAll('#segLevel button').forEach(b=>b.textContent=t.levels[b.dataset.v]);
-  [...$('speed').options].forEach((o,i)=>o.textContent=t.speeds[i]);
+  document.querySelectorAll('#segSpeed button').forEach(b=>b.textContent=t.speeds[+b.dataset.v]);setSeg('segSpeed',spd);$('speedBox').hidden=mode!=='cc';
   $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
   setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segAnim',anim);document.querySelectorAll('#segAnim button').forEach(b=>b.textContent=t.anims[+b.dataset.v]);
@@ -564,9 +567,8 @@ $('again').onclick=newGame;$('newTop').onclick=newGame;
 $('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;stopAll();
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
   last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
-$('playBtn').onclick=()=>{paused=!paused;render();schedAI()};
-$('speed').value=String(spd);
-$('speed').onchange=e=>{spd=+e.target.value;store.set('tk-spd2',spd);schedAI()};
+$('playTop').onclick=()=>{paused=!paused;render();schedAI()};
+$('segSpeed').onclick=e=>{const b=e.target.closest('button');if(!b)return;spd=+b.dataset.v;store.set('tk-spd2',spd);applyLang();schedAI()};
 let deferred=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('mInstall').hidden=false});
 $('mInstall').onclick=async()=>{if(!deferred)return;closeMenu();deferred.prompt();await deferred.userChoice;deferred=null;$('mInstall').hidden=true};
