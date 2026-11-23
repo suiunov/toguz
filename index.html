@@ -175,22 +175,58 @@ button.b.main{background:linear-gradient(#f8d36a,#e9ae2c);box-shadow:0 3px 0 #a6
 button.b.main:active{box-shadow:0 1px 0 #a6741a}
 details{border:1px solid rgba(255,255,255,.08)}
 @media(prefers-reduced-motion:reduce){button.b{transition:none}}
+
+/* ---- app shell: top bar + side menu ---- */
+.wrap{padding-top:10px}
+.appbar{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;
+  padding:8px max(3vw,10px);padding-top:max(8px,env(safe-area-inset-top));background:rgba(70,10,18,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.ib{width:44px;height:44px;border-radius:12px;border:0;background:rgba(0,0,0,.22);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.ib svg{width:24px;height:24px}.ib:focus-visible,.mi:focus-visible,.seg button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.ttl{text-align:center;line-height:1.1;min-width:0}
+.ttl b{display:block;font-family:Philosopher,Rubik,serif;font-size:24px;letter-spacing:.01em}
+.ttl small{display:block;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:8}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(86vw,360px);z-index:9;transform:translateX(-105%);transition:transform .28s ease;
+  overflow-y:auto;padding:0 14px 28px;padding-bottom:max(28px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#5c111a,#360910);box-shadow:10px 0 34px rgba(0,0,0,.45);visibility:hidden}
+.drawer.show{transform:none;visibility:visible}
+.dhead{position:sticky;top:0;z-index:1;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;
+  margin:0 -14px 6px;padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top));background:#4d0e16;border-bottom:1px solid rgba(255,255,255,.08)}
+.dhead b{font-size:19px;text-align:center}
+#dBack[hidden]{display:block!important;visibility:hidden}
+.mi{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0 12px;border:0;border-radius:14px;background:transparent;color:var(--ink);font:500 17px Rubik,system-ui,sans-serif;cursor:pointer;text-align:start}
+.mi:hover{background:rgba(255,255,255,.07)}.mi svg{width:22px;height:22px;flex:none;color:var(--gold)}
+.mi em{margin-inline-start:auto;font-style:normal;font-size:14px;color:var(--soft)}
+.lbl{font-size:14px;color:var(--soft);margin:14px 4px 6px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.28)}
+.seg.col{grid-auto-flow:row}
+.seg button{min-height:44px;border:0;border-radius:10px;background:transparent;color:var(--ink);font:500 15px Rubik,system-ui,sans-serif;cursor:pointer;padding:0 8px}
+.seg button.on{background:linear-gradient(#f8d36a,#e9ae2c);color:#3b1d05;font-weight:700}
+.sep{height:1px;background:rgba(255,255,255,.1);margin:16px 4px 8px}
+.rules{margin:6px 0 0;padding-inline-start:22px}.rules li{margin:0 0 12px;color:var(--soft);line-height:1.5}.rules b{color:var(--ink)}
+.aboutArt{width:96px;height:96px;display:block;margin:12px auto 4px;border-radius:22px;background:#8c1c24}
+#aboutTxt{color:var(--soft);line-height:1.55;text-align:center}
+.ctrl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.ctrl button.b{width:100%}
+@media(prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
 </style>
 </head>
 <body>
+<div class="appbar">
+  <button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <div class="ttl"><b data-t="title"></b><small id="modeLbl"></small></div>
+  <button class="ib" id="newTop" aria-label="New game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button>
+</div>
 <div class="wrap">
-<header><div class="sub">Кыргыздын улуттук оюну</div><h1>Тогуз коргоол</h1></header>
-<svg class="orn" viewBox="0 0 400 22" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-<defs><pattern id="horn" width="44" height="22" patternUnits="userSpaceOnUse">
-<path d="M2 20 C2 6 20 2 22 11 C24 2 42 6 42 20 M12 20c0-6 6-7 6-2 M32 20c0-6-6-7-6-2" fill="none" stroke="#fff7ee" stroke-width="2.4" stroke-linecap="round"/></pattern></defs>
-<rect width="400" height="22" fill="url(#horn)"/></svg>
 <div class="bubbles" aria-live="polite"><div class="bub" id="bub1"></div><div class="bub r" id="bub0"></div></div>
 <div class="players">
   <div class="pl" id="pl1"><span class="av"></span><div><div class="pn" id="pn1"></div><div class="pst" id="pst1"></div></div></div>
   <div class="pl r" id="pl0"><span class="av"></span><div><div class="pn" id="pn0"></div><div class="pst" id="pst0"></div></div></div>
 </div>
 <div class="tut" id="tut" hidden><div class="step" id="tStep"></div><h3 id="tT"></h3><p id="tP"></p><div class="tlist" id="tList" hidden></div>
-<div class="tbtns"><button class="b main" id="tNext">Кийинки</button><button class="b" id="tBest" hidden>Мыкты жүрүш</button><button class="b" id="tRetry" hidden>Кайра</button><button class="b" id="tExit">Чыгуу</button></div></div>
+<div class="tbtns"><button class="b main" id="tNext"></button><button class="b" id="tBest" hidden data-t="bestBtn"></button><button class="b" id="tRetry" hidden></button><button class="b" id="tExit" data-t="exit"></button></div></div>
 
 <div class="board" id="board">
   <div class="row nums" id="topNums"></div>
@@ -203,48 +239,135 @@ details{border:1px solid rgba(255,255,255,.08)}
   <div class="row nums" id="botNums"></div>
 </div>
 <div class="ccbar" id="ccbar" hidden>
-  <button class="b main" id="playBtn">Тыным</button>
-  <button class="b" id="stepBtn">Бир жүрүш ›</button>
-  <label>Ылдамдык <select id="speed"><option value="0">Өтө жай</option><option value="1">Жай</option><option value="2">Орто</option><option value="3">Тез</option></select></label>
+  <button class="b main" id="playBtn"></button>
+  <button class="b" id="stepBtn" data-t="step"></button>
+  <label><span data-t="speed"></span> <select id="speed"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option></select></label>
 </div>
-
 <div class="ctrl">
-  <button class="b main" id="installBtn" hidden>Телефонго орнотуу</button>
-  <button class="b main" id="newBtn">Жаңы оюн</button>
-  <button class="b" id="undoBtn">Артка</button>
-  <button class="b" id="taskBtn">Тапшырмалар</button>
-  <select id="mode" aria-label="Оюн түрү"><option value="ai">Компьютерге каршы</option><option value="2p">2 оюнчу</option><option value="cc">Компьютер өзү ойнойт</option></select>
-  <select id="level" aria-label="Деңгээл"><option value="1">Жеңил</option><option value="4" selected>Орто</option><option value="8">Оор</option></select>
+  <button class="b" id="undoBtn" data-t="undo"></button>
+  <button class="b main" id="newBtn" data-t="newGame"></button>
+</div>
 </div>
 
-<details>
-<summary>Оюндун эрежелери</summary>
-<ul>
-<li>Ар бир оюнчунун <b>9 үйү</b> бар, ар биринде 9 коргоолдон, жана бир <b>казаны</b> бар. Бардыгы 162 коргоол.</li>
-<li>Кезегиңизде өз үйлөрүңүздүн бирин басыңыз. Андагы бардык коргоолдор алынат: <b>биринчи коргоол ошол эле үйгө кайра коюлат</b>, калгандары саат жебесине каршы бирден кийинки үйлөргө таратылат. Үйдө бир гана коргоол болсо, ал кийинки үйгө өтөт.</li>
-<li>Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.</li>
-<li>Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын түстө, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Чектөөлөр: бир оюнда бир гана туздук алууга болот, каршылаштын 9-үйүнөн туздук алууга болбойт, жана каршылаштын туздугу менен бирдей номердеги үйдөн алууга болбойт.</li>
-<li><b>82 же андан көп</b> коргоол чогулткан оюнчу жеңет. 81–81 болсо, тең чыгат. Эгер оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы калган коргоолдорду алат жана оюн бүтөт.</li>
-</ul>
-</details>
-</div>
+<div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button class="b main" id="again" data-t="playAgain"></button></div></div>
 
-<div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button class="b main" id="again">Кайра ойноо</button></div></div>
-
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dhead">
+    <button class="ib" id="dBack" hidden aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <b id="dTitle"></b>
+    <button class="ib" id="dClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="view" data-v="main">
+    <button class="mi" id="mNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg><span data-t="newGame"></span></button>
+    <div class="lbl" data-t="mode"></div>
+    <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="cc"></button></div>
+    <div id="levelBox"><div class="lbl" data-t="level"></div>
+    <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button></div></div>
+    <div class="sep"></div>
+    <button class="mi" id="mTasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg><span data-t="tasks"></span><em id="taskProg"></em></button>
+    <button class="mi" data-go="rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10l4 4v12H5z M9 12h6M9 16h6M9 8h3"/></svg><span data-t="rules"></span></button>
+    <button class="mi" data-go="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-t="settings"></span></button>
+    <button class="mi" id="mInstall" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3"/></svg><span data-t="install"></span></button>
+    <button class="mi" data-go="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-t="about"></span></button>
+  </div>
+  <div class="view" data-v="rules" hidden><ol class="rules" id="rulesList"></ol></div>
+  <div class="view" data-v="settings" hidden>
+    <div class="lbl" data-t="language"></div>
+    <div class="seg" id="segLang"><button data-v="ky">Кыргызча</button><button data-v="en">English</button></div>
+    <div class="lbl" data-t="animation"></div>
+    <div class="seg" id="segAnim"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
+    <div class="lbl" data-t="taskProgress"></div>
+    <button class="mi" id="mReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-t="resetProgress"></span><em id="resetNote"></em></button>
+  </div>
+  <div class="view" data-v="about" hidden>
+    <svg class="aboutArt" viewBox="0 0 108 108" aria-hidden="true"><rect x="22" y="30" width="64" height="44" rx="6" fill="#9a6634"/><g fill="#2e1a0c"><rect x="29" y="36" width="14" height="12" rx="2"/><rect x="47" y="36" width="14" height="12" rx="2"/><rect x="65" y="36" width="14" height="12" rx="2"/><rect x="29" y="56" width="14" height="12" rx="2"/><rect x="47" y="56" width="14" height="12" rx="2"/><rect x="65" y="56" width="14" height="12" rx="2"/></g><g fill="#f6ecd8"><circle cx="36" cy="42" r="3"/><circle cx="54" cy="42" r="3"/><circle cx="72" cy="42" r="3"/><circle cx="36" cy="62" r="3"/><circle cx="54" cy="62" r="3"/><circle cx="72" cy="62" r="3"/></g><rect x="22" y="51" width="64" height="2" fill="#f4c247"/></svg>
+    <p id="aboutTxt"></p>
+  </div>
+</aside>
 <script>
 {
 const $=id=>document.getElementById(id);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let S,hist=[],busy=false,last=-1,land=-1,timer=null;
-let mode='ai',level=4;
-try{mode=localStorage.getItem('tk-mode')||'ai';level=+(localStorage.getItem('tk-level')||4)}catch(e){}
-$('mode').value=mode;$('level').value=String(level);
+let mode=store.get('tk-mode','ai'),level=+store.get('tk-level',4),spd=+store.get('tk-spd2',1);
+let lang=store.get('tk-lang',(navigator.language||'').startsWith('ky')||(navigator.language||'').startsWith('ru')?'ky':(navigator.language||'').startsWith('en')?'en':'ky');
+let anim=store.get('tk-anim','1')==='1';
+if(!['ai','2p','cc'].includes(mode))mode='ai';
 
+/* ---------- texts ---------- */
+const TX={
+ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
+  speeds:['Өтө жай','Жай','Орто','Тез'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор'},
+  menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
+  language:'Тил',animation:'Анимация',on:'Күйүк',off:'Өчүк',taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
+  you:'Сиз',computer:'Компьютер',opponent:'Каршылаш',player:n=>`${n}-оюнчу`,comp:n=>`Компьютер ${n}`,
+  winner:'Жеңүүчү',draw:'Тең',waiting:'Күтүүдө',paused:'Тыным',thinking:'Ойлонууда…',yourTurn:'Сиздин кезегиңиз',turn:'Кезек',taskSt:'Тапшырма',
+  played:(h,y)=>`${h}-үйдөн жүрдү${y?'ңүз':''}.`,took:(n,y)=>`${n} коргоол ${y?'алдыңыз':'алды'}!`,tuzT:(h,y)=>`Туздук ${y?'алдыңыз':'алды'} (${h}-үй)!`,
+  drawT:'Тең чыкты',youWin:'Сиз жеңдиңиз!',compWins:'Компьютер жеңди',wins:n=>`${n} жеңди!`,
+  hole:(w,h,n,t)=>`${w}, ${h}-үй: ${t?'туздук':n+' коргоол'}`,tz:'Т',
+  exit:'Чыгуу',bestBtn:'Мыкты жүрүш',tapAny:' Каалаган үйүңүздү басыңыз.',skip:'Өткөрүп жиберүү',correct:'Туура! ',correctHelp:'Туура (көрсөтмө менен). ',
+  madeTuz:'Туздук алдыңыз.',winWith:k=>`Сиз ${k} коргоол менен жеңдиңиз!`,tookG:g=>`${g} коргоол алдыңыз.`,
+  wrong:(g,a)=>`Жок. Бул жүрүш ${g} коргоол берди. Туура жооп — ${a}-үй. Кайра аракет кылыңыз.`,
+  nextTask:'Кийинки тапшырма',results:'Жыйынтык',retry:'Кайра',toGame:'Оюнга өтүү',restart:'Кайра баштоо',tasksDone:'Тапшырмалар бүттү',
+  summary:(n,s)=>`${n} тапшырмадан ${s} туура`,allSolved:'Азаматсыз! Бардыгын чечтиңиз. Эми компьютерге каршы ойноп көрүңүз.',someSolved:'Жакшы! Чечилбегендерин кайра аракет кылып көрүңүз.',
+  stepLbl:(i,n,s)=>`Тапшырма ${i} / ${n} · Чечилди: ${s}`,bestPre:'Мыкты жүрүш: ',tapGlow:' Жылтылдаган үйдү басыңыз.',
+  li:(m,v)=>`${m}-үй → ${v}`,tuzW:'туздук',
+  exUse:(a,n,g)=>`${a}-үйдө ${n} коргоол. Алар туздугуңуз аркылуу өтөт — туздукка түшкөнү дароо казаныңызга барат. Жалпы ${g} коргоол.`,
+  exTuz:(a,n,h)=>`${a}-үйдө ${n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол так 3 болот — туздук!`,
+  exCap:(a,n,h,c,g)=>`${a}-үйдө ${n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол ${c} болот — жуп сан, ${g} коргоол сизге!`,
+  exOwn:(a,g)=>`${a}-үйдөн жүрүңүз: ${g} коргоол.`,exWin:k=>` Казаныңыз ${k} болот — жеңиш!`,
+  task:{cap:['Коргоол ут','Бир гана жүрүш каршылаштын коргоолдорун утат. Ошол үйдү табыңыз.'],
+    max:['Эң көп ут','Бир нече жүрүш утат. Эң көп коргоол бере турганын табыңыз.'],
+    tuz:['Туздук ал','Туздук алып бере турган жүрүштү табыңыз: акыркы коргоол каршылаштын үйүндө так 3 кылышы керек.'],
+    usetuz:['Туздукту колдон','Сиздин туздугуңуз бар (алтын «Т»). Казанга эң көп коргоол киргизе турган жүрүштү табыңыз — туздукка түшкөндөрү да эсептелет.'],
+    win:['Жеңиш жүрүшү','Казаныңызда {k} коргоол. 82ге жетип, оюнду бир жүрүш менен утуп алыңыз!'],
+    win2:['Жеңиш жүрүшү 2','Казаныңызда {k} коргоол. Жеңе турган бир гана жүрүш бар — абайлаңыз, азгыруу да бар!']},
+  rulesL:['Ар бир оюнчунун <b>9 үйү</b> бар, ар биринде 9 коргоолдон, жана бир <b>казаны</b> бар. Бардыгы 162 коргоол.',
+    'Кезегиңизде өз үйлөрүңүздүн бирин басыңыз. Андагы бардык коргоолдор алынат: <b>биринчи коргоол ошол эле үйгө кайра коюлат</b>, калгандары саат жебесине каршы бирден кийинки үйлөргө таратылат. Үйдө бир гана коргоол болсо, ал кийинки үйгө өтөт.',
+    'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.',
+    'Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Бир оюнда бир гана туздук; каршылаштын 9-үйүнөн жана анын туздугу менен бирдей номердеги үйдөн алууга болбойт.',
+    'Казандагы 9 чарчы толсо — 81. <b>82 же андан көп</b> чогулткан оюнчу жеңет. 81–81 — тең. Оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы коргоолдорду алат жана оюн бүтөт.'],
+  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.1.'},
+en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
+  speeds:['Very slow','Slow','Normal','Fast'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard'},
+  menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
+  language:'Language',animation:'Animation',on:'On',off:'Off',taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
+  you:'You',computer:'Computer',opponent:'Opponent',player:n=>`Player ${n}`,comp:n=>`Computer ${n}`,
+  winner:'Winner',draw:'Draw',waiting:'Waiting',paused:'Paused',thinking:'Thinking…',yourTurn:'Your turn',turn:'Turn',taskSt:'Task',
+  played:(h,y)=>`Played hole ${h}.`,took:(n,y)=>`Took ${n}!`,tuzT:(h,y)=>`Tuzdyk on hole ${h}!`,
+  drawT:'Draw',youWin:'You win!',compWins:'Computer wins',wins:n=>`${n} wins!`,
+  hole:(w,h,n,t)=>`${w}, hole ${h}: ${t?'tuzdyk':n+' stones'}`,tz:'T',
+  exit:'Exit',bestBtn:'Best move',tapAny:' Tap any of your holes.',skip:'Skip',correct:'Correct! ',correctHelp:'Correct (with help). ',
+  madeTuz:'You made a tuzdyk.',winWith:k=>`You win with ${k} stones!`,tookG:g=>`You took ${g} stones.`,
+  wrong:(g,a)=>`Not quite. That move gave ${g}. The answer is hole ${a}. Try again.`,
+  nextTask:'Next task',results:'Results',retry:'Retry',toGame:'Go to game',restart:'Start again',tasksDone:'Tasks finished',
+  summary:(n,s)=>`${s} of ${n} correct`,allSolved:'Well done! You solved them all. Now try playing the computer.',someSolved:'Good! Try the unsolved ones again.',
+  stepLbl:(i,n,s)=>`Task ${i} / ${n} · Solved: ${s}`,bestPre:'Best move: ',tapGlow:' Tap the glowing hole.',
+  li:(m,v)=>`Hole ${m} → ${v}`,tuzW:'tuzdyk',
+  exUse:(a,n,g)=>`Hole ${a} has ${n} stones. They pass through your tuzdyk, and every stone landing there goes straight to your kazan. ${g} stones in total.`,
+  exTuz:(a,n,h)=>`Hole ${a} has ${n} stones. The last one lands in the opponent's hole ${h}, making exactly 3 — a tuzdyk!`,
+  exCap:(a,n,h,c,g)=>`Hole ${a} has ${n} stones. The last one lands in the opponent's hole ${h}, making ${c} — an even number, so ${g} stones are yours!`,
+  exOwn:(a,g)=>`Play hole ${a}: ${g} stones.`,exWin:k=>` Your kazan reaches ${k} — you win!`,
+  task:{cap:['Capture','Only one move captures stones. Find that hole.'],
+    max:['Capture the most','Several moves capture. Find the one that takes the most stones.'],
+    tuz:['Make a tuzdyk','Find the move that wins a tuzdyk: your last stone must make exactly 3 in an opponent’s hole.'],
+    usetuz:['Use your tuzdyk','You own a tuzdyk (gold T). Find the move that puts the most stones in your kazan — stones dropped in the tuzdyk count too.'],
+    win:['Winning move','Your kazan has {k} stones. Reach 82 and win the game in one move!'],
+    win2:['Winning move 2','Your kazan has {k} stones. Only one move wins — careful, there’s a trap!']},
+  rulesL:['Each player has <b>9 holes</b> with 9 stones each, and a <b>kazan</b> (store). 162 stones in total.',
+    'On your turn, tap one of your holes. All its stones are lifted: <b>the first goes back into the same hole</b>, the rest are sown one by one into the next holes, counter-clockwise. A hole with a single stone moves it to the next hole.',
+    'If your last stone lands in an opponent’s hole and makes the count <b>even</b>, you take them all into your kazan.',
+    'If it makes exactly <b>3</b>, that hole becomes your <b>tuzdyk</b> (gold for you, blue for the opponent): the 3 stones are yours, and every stone that later falls in goes to your kazan. One tuzdyk per player; never the opponent’s 9th hole, and not the same number as the opponent’s tuzdyk.',
+    'Nine full squares in the kazan is 81. Collect <b>82 or more</b> to win; 81–81 is a draw. If a player has no stones to move, the other player takes the stones left on their side and the game ends.'],
+  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.1.'}};
+const T=()=>TX[lang];
+
+/* ---------- rules engine ---------- */
 const clone=s=>({b:s.b.slice(),k:s.k.slice(),t:s.t.slice(),turn:s.turn,over:s.over});
 function legal(s){const o=s.turn*9,r=[];for(let i=o;i<o+9;i++)if(s.b[i]>0)r.push(i);return r}
 function drop(s,pos){if(s.t[0]===pos)s.k[0]++;else if(s.t[1]===pos)s.k[1]++;else s.b[pos]++}
-
-/* one move; frames (optional) collects a snapshot after each stone */
 function apply(s,i,frames){
   const p=s.turn,n=s.b[i];s.b[i]=0;let pos=i,ev=null;
   const snap=q=>frames&&frames.push({s:clone(s),q});
@@ -266,7 +389,6 @@ function apply(s,i,frames){
   snap(pos);
   return ev;
 }
-
 /* computer: alpha-beta minimax */
 function evalS(s,me){return s.k[me]-s.k[1-me]+(s.t[me]>=0?8:0)-(s.t[1-me]>=0?8:0)}
 function search(s,d,a,bt,me){
@@ -286,64 +408,49 @@ function bestMove(s,d){
   return bm;
 }
 
-let tut=null,paused=false,spd=1;
-/* [ms per stone, break between turns ms] */
+/* ---------- game screen ---------- */
+let tut=null,paused=false;
 const SPEEDS=[[650,3000],[380,2000],[200,1200],[70,1000]];
-try{const v=localStorage.getItem('tk-spd2');if(v!==null)spd=+v}catch(e){}
-$('speed').value=String(spd);
 const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
-const pos=(b,k,t)=>({b,k:k||[0,0],t:t||[-1,-1],turn:0,over:null});
-const LESSONS=[
-{t:'Тактай',p:'Төмөнкү катар — сиздин 9 үйүңүз, үстүңкү катар — каршылаштыкы. Ар бир үйдө 9 коргоолдон. Ортодогу узун тилкелер — казандар: утуп алган коргоолдор ошол жакка түшөт. Казанда 9 чарчы бар, ар бири 9 коргоол (3×3) батырат — ошентип оңой санайсыз.',s:fresh},
-{t:'Жүрүш',p:'Жылтылдап турган 1-үйүңүздү басыңыз.',s:fresh,target:0,a:'Бардык 9 коргоол алынды: биринчиси ошол эле 1-үйгө кайра түштү, калган 8и 2–9-үйлөргө бирден таратылды. Коргоолдор дайыма саат жебесине каршы жылат: сиздин катарыңыз солдон оңго, каршылаштыкы оңдон солго.'},
-{t:'Бир коргоол',p:'5-үйдө бир гана коргоол бар. Аны басыңыз.',s:()=>pos([3,4,2,6,1,5,3,2,4,5,3,6,2,4,3,5,2,4]),target:4,a:'Үйдө бир гана коргоол болсо, ал кийинки үйгө өтөт, ал эми үй бош калат.'},
-{t:'Утуу',p:'9-үйүңүздө 2 коргоол, каршылаштын 1-үйүндө 5 коргоол. 9-үйүңүздү басыңыз.',s:()=>pos([4,4,4,4,4,4,4,4,2,5,4,4,4,4,4,4,4,4]),target:8,a:'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоол 6 болду — жуп сан. Ошондуктан 6 коргоолдун баары сиздин казаныңызга өттү! Так сан болсо, эч нерсе утулбайт.'},
-{t:'Туздук',p:'Эми каршылаштын 1-үйүндө 2 коргоол. 9-үйүңүздү басыңыз — ал жакта 3 болот.',s:()=>pos([4,4,4,4,4,4,4,4,2,2,4,4,4,4,4,4,4,4]),target:8,a:'Каршылаштын үйүндө так 3 коргоол болду — ал үй эми сиздин туздугуңуз (алтын «Т»), 3 коргоол казаныңызга өттү. Бир оюнда бир гана туздук алса болот, каршылаштын 9-үйүнөн алууга болбойт, каршылаштын туздугу менен бирдей номердеги үйдөн да болбойт.'},
-{t:'Туздуктун пайдасы',p:'Каршылаштын 1-үйү — сиздин туздугуңуз. 8-үйүңүздү басып, коргоол ага кантип түшөөрүн көрүңүз.',s:()=>pos([4,4,4,4,4,4,4,3,4,0,4,4,4,4,4,4,4,4],[3,0],[9,-1]),target:7,a:'Туздукка түшкөн ар бир коргоол дароо сиздин казаныңызга барат — каршылаш өзү да ага коргоол салып берет. Туздук оюн аягына чейин иштейт.'},
-{t:'Жеңиш',p:'Казандагы 9 чарчынын баары толсо — 81 коргоол. Дагы бир коргоол алсаңыз (82), жеңесиз! Жалпысынан 162 коргоол. 81–81 — тең. Бир оюнчунун жүрүш жасаганга коргоолу калбаса, оюн бүтөт. Ийгилик!',s:fresh,end:true}
-];
-const names=()=>tut?['Сиз','Каршылаш']:mode==='ai'?['Сиз','Компьютер']:mode==='cc'?['Компьютер 1','Компьютер 2']:['1-оюнчу','2-оюнчу'];
+const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='ai'?[t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
 const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
 
 function holeHTML(i){
   const n=S.b[i],own=S.t[0]===i?0:S.t[1]===i?1:-1;
-  const hint=tut&&!tut.done&&(tut.task?(tut.best&&TASKS[tut.i]&&TASKS[tut.i].ans[0]===i):tut.target===i);
-  const canClick=tut?(tut.task?(!busy&&!tut.done&&i<9&&n>0):(hint&&!busy)):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
+  const hint=tut&&!tut.done&&tut.best&&TASKS[tut.i]&&TASKS[tut.i].ans[0]===i;
+  const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
   const cls=['hole',canClick?'can':'',hint?'hint':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
   const dots=own>=0?'':'<span class="st"></span>'.repeat(Math.min(n,30));
-  const lab=own>=0?'Т':n;
   const who=Math.floor(i/9)===0?names()[0]:names()[1];
-  return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${who}, ${i%9+1}-үй: ${own>=0?'туздук':n+' коргоол'}"><span class="stones">${dots}</span><span class="cnt">${lab}</span></button>`;
+  return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}"><span class="stones">${dots}</span><span class="cnt">${own>=0?T().tz:n}</span></button>`;
+}
+function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
+  o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}return o}
+function stTxt(p){const t=T();
+  if(tut)return p===0?t.taskSt:'';
+  if(S.over)return S.over.w===p?t.winner:S.over.w<0?t.draw:'';
+  if(S.turn!==p)return t.waiting;
+  if(mode==='cc')return paused?t.paused:t.thinking;
+  if(mode==='ai')return p===1?t.thinking:t.yourTurn;
+  return t.turn;
 }
 function render(){
   const top=[],bot=[];for(let i=17;i>=9;i--)top.push(i);for(let i=0;i<9;i++)bot.push(i);
   $('top').innerHTML=top.map(holeHTML).join('');$('bot').innerHTML=bot.map(holeHTML).join('');
   $('topNums').innerHTML=top.map(i=>`<span>${i-8}</span>`).join('');
   $('botNums').innerHTML=bot.map(i=>`<span>${i+1}</span>`).join('');
-  const nm=names();
+  const nm=names(),t=T();
   for(const p of [0,1]){$('k'+p).textContent=S.k[p];$('kn'+p).textContent=nm[p];$('sl'+p).innerHTML=slotsHTML(S.k[p]);$('px'+p).textContent=S.k[p]>81?'+'+(S.k[p]-81):'';
-    $('kz'+p).classList.toggle('on',!S.over&&S.turn===p)}
-  for(const p of [0,1]){$('pn'+p).textContent=nm[p];$('pst'+p).textContent=stTxt(p);
+    $('kz'+p).classList.toggle('on',!S.over&&S.turn===p);
+    $('pn'+p).textContent=nm[p];$('pst'+p).textContent=stTxt(p);
     $('pl'+p).classList.toggle('on',tut?p===0:!S.over&&S.turn===p||(S.over&&S.over.w===p))}
   $('undoBtn').disabled=busy||hist.length===0||!!tut;
   $('undoBtn').hidden=mode==='cc';$('ccbar').hidden=mode!=='cc'||!!tut;
-  $('playBtn').textContent=paused?'Ойнотуу':'Тыным';
+  $('playBtn').textContent=paused?t.play:t.pause;
   $('stepBtn').disabled=!paused||busy||!!S.over;
   const dim=!S.over&&!tut;
   $('top').classList.toggle('idle',dim&&S.turn!==1);$('bot').classList.toggle('idle',dim&&S.turn!==0);
-  $('level').style.display=mode==='2p'?'none':'';
-}
-
-function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
-  o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}
-  return o}
-function stTxt(p){
-  if(tut)return p===0?'Үйрөнүүдө':'';
-  if(S.over)return S.over.w===p?'Жеңүүчү':S.over.w<0?'Тең':'';
-  if(S.turn!==p)return 'Күтүүдө';
-  if(mode==='cc')return paused?'Тыным':'Ойлонууда…';
-  if(mode==='ai')return p===1?'Ойлонууда…':'Сиздин кезегиңиз';
-  return 'Кезек';
+  $('modeLbl').textContent=tut?t.tasks:t.modes[mode]+(mode==='2p'?'':' · '+t.levels[level]);
 }
 function say(p,html){for(const q of [0,1]){const b=$('bub'+q);
   if(p==null){b.innerHTML='';b.classList.remove('old');continue}
@@ -353,18 +460,18 @@ function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,mode=
 function doMove(i){
   if(busy||S.over)return;
   hist.push(clone(S));
-  const frames=[],s=clone(S),p=S.turn,ev=apply(s,i,frames);
-  const nm=names(),you=(tut||mode==='ai')&&p===0,vb=you?'алдыңыз':'алды';
-  const mv=`${i%9+1}-үйдөн жүрдү${you?'ңүз':''}.`;
+  const frames=[],s=clone(S),p=S.turn,ev=apply(s,i,frames),t=T();
+  const you=(tut||mode==='ai')&&p===0;
+  const mv=t.played(i%9+1,you);
   last=i;busy=true;say(p,mv);
   const done=()=>{S=s;land=-1;busy=false;
-    if(ev){const b=$('bub'+p);b.innerHTML=mv+' <b>'+(ev.type==='cap'?`${ev.n} коргоол ${vb}!`:`Туздук ${vb} (${ev.h}-үй)!`)+'</b>';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
-    if(tut){tut.done=true;if(tut.task)checkTask(i,ev,hist[hist.length-1]);showTut();render();return}
+    if(ev){const b=$('bub'+p);b.innerHTML=mv+' <b>'+(ev.type==='cap'?t.took(ev.n,you):t.tuzT(ev.h,you))+'</b>';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
+    if(tut){tut.done=true;checkTask(i,ev,hist[hist.length-1]);showTut();render();return}
     render();
     if(S.over)return showOver();
     schedAI();
   };
-  if(reduced){done();return}
+  if(reduced||!anim){done();return}
   const step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(30,Math.min(110,1500/frames.length));let f=0;
   const tick=()=>{if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();timer=setTimeout(tick,step)}else done()};
   tick();
@@ -372,95 +479,98 @@ function doMove(i){
 function aiMove(){if(!aiTurn()||busy)return;render();
   setTimeout(()=>{if(aiTurn()&&!busy)doMove(bestMove(S,level))},30)}
 function showOver(){
-  const w=S.over.w,nm=names();
-  $('ovT').textContent=w<0?'Тең чыкты':mode==='ai'?(w===0?'Сиз жеңдиңиз!':'Компьютер жеңди'):nm[w]+' жеңди!';
+  const w=S.over.w,nm=names(),t=T();
+  $('ovT').textContent=w<0?t.drawT:mode==='ai'?(w===0?t.youWin:t.compWins):t.wins(nm[w]);
   $('ovP').textContent=`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
   $('over').classList.add('show');
 }
 function newGame(){clearTimeout(timer);busy=false;tut=null;$('tut').hidden=true;S=fresh();
   hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');render();schedAI()}
 
-/* tutorial lessons */
-function startTut(i){clearTimeout(timer);busy=false;$('over').classList.remove('show');
-  const L=LESSONS[i];tut={i,target:L.target??-1,done:false};S=L.s();hist=[];last=-1;land=-1;say(null);showTut();render();
-  $('tut').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})}
-
-/* tasks: find the best move (positions checked with the game rules) */
+/* ---------- tasks: find the best move ---------- */
 const TASKS=[{"b":[10,4,0,6,7,4,10,13,6,10,5,9,5,6,8,4,5,1],"k":[18,31],"t":[-1,2],"kind":"cap","ans":[4]},{"b":[4,7,10,5,4,0,6,9,10,7,6,8,8,8,7,9,4,8],"k":[7,35],"t":[-1,5],"kind":"cap","ans":[7]},{"b":[4,10,10,10,3,3,0,7,5,7,9,8,8,10,10,6,6,1],"k":[23,22],"t":[-1,6],"kind":"cap","ans":[1]},{"b":[6,7,9,7,9,17,7,13,9,9,7,5,7,9,4,6,8,7],"k":[9,7],"t":[-1,-1],"kind":"max","ans":[3]},{"b":[8,8,7,8,11,6,6,8,8,9,6,10,4,4,3,7,3,8],"k":[26,12],"t":[-1,-1],"kind":"max","ans":[8]},{"b":[12,9,5,6,4,9,6,3,11,5,10,6,11,2,2,13,6,6],"k":[10,26],"t":[-1,-1],"kind":"tuz","ans":[5]},{"b":[10,8,7,6,8,3,8,6,6,2,2,6,10,3,8,2,11,5],"k":[6,45],"t":[-1,-1],"kind":"tuz","ans":[0]},{"b":[6,6,12,8,7,8,11,8,9,3,5,5,0,7,4,4,5,5],"k":[31,18],"t":[12,-1],"kind":"usetuz","ans":[2]},{"b":[1,1,2,3,1,7,1,0,1,1,1,5,2,1,5,1,0,3],"k":[76,50],"t":[-1,-1],"kind":"win","ans":[5]},{"b":[0,0,4,1,1,3,1,3,3,5,2,1,5,3,2,2,0,2],"k":[76,48],"t":[-1,0],"kind":"win2","ans":[7]}];
-const TASK_TXT={
-  cap:['Коргоол ут','Бир гана жүрүш каршылаштын коргоолдорун утат. Ошол үйдү табыңыз.'],
-  max:['Эң көп ут','Бир нече жүрүш утат. Эң көп коргоол бере турганын табыңыз.'],
-  tuz:['Туздук ал','Туздук алып бере турган жүрүштү табыңыз: акыркы коргоол каршылаштын үйүндө так 3 кылышы керек.'],
-  usetuz:['Туздукту колдон','Сиздин туздугуңуз бар (алтын «Т»). Казанга эң көп коргоол киргизе турган жүрүштү табыңыз — туздукка түшкөндөрү да эсептелет.'],
-  win:['Жеңиш жүрүшү','Казаныңызда {k} коргоол. 82ге жетип, оюнду бир жүрүш менен утуп алыңыз!'],
-  win2:['Жеңиш жүрүшү 2','Казаныңызда {k} коргоол. Жеңе турган бир гана жүрүш бар — абайлаңыз, азгыруу да бар!']};
-let solved=[];try{solved=JSON.parse(localStorage.getItem('tk-solved')||'[]')}catch(e){}
+let solved=[];try{solved=JSON.parse(store.get('tk-solved','[]'))}catch(e){}
 const solvedN=()=>solved.filter(Boolean).length;
 function startTask(i){clearTimeout(timer);busy=false;$('over').classList.remove('show');
-  if(i>=TASKS.length){tut={task:true,summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
-  const T=TASKS[i];tut={task:true,i,done:false,ok:null,gain:0};
-  S={b:T.b.slice(),k:T.k.slice(),t:T.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
-  $('tut').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})}
-
-function taskMoves(T){const s={b:T.b.slice(),k:T.k.slice(),t:T.t.slice(),turn:0,over:null};
+  if(i>=TASKS.length){tut={summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
+  const X=TASKS[i];tut={i,done:false,ok:null,gain:0};
+  S={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
+  scrollTo({top:0,behavior:reduced?'auto':'smooth'})}
+function taskMoves(X){const s={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};
   return legal(s).map(m=>{const c=clone(s),fr=[],ev=apply(c,m,fr);const pre=fr.length>1?fr[fr.length-2]:fr[0];
     return {m,g:c.k[0]-s.k[0],tuz:!!(ev&&ev.type==='tuz'),win:!!(c.over&&c.over.w===0),n:s.b[m],q:pre.q,c:pre.s.b[pre.q],k0:s.k[0]}})}
-function explain(T){const M=taskMoves(T),b=M.find(x=>x.m===T.ans[0]),a=b.m+1,h=b.q%9+1,opp=b.q>=9;
-  let t;
-  if(T.kind==='usetuz')t=`${a}-үйдө ${b.n} коргоол. Алар туздугуңуз аркылуу өтөт — туздукка түшкөнү дароо казаныңызга барат. Жалпы ${b.g} коргоол.`;
-  else if(b.tuz)t=`${a}-үйдө ${b.n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол так 3 болот — туздук!`;
-  else if(opp)t=`${a}-үйдө ${b.n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол ${b.c} болот — жуп сан, ${b.g} коргоол сизге!`;
-  else t=`${a}-үйдөн жүрүңүз: ${b.g} коргоол.`;
-  if(b.win)t+=` Казаныңыз ${b.k0+b.g} болот — жеңиш!`;
-  const list=M.map(x=>`<span class="${x.m===b.m?'best':''}">${x.m+1}-үй → ${x.tuz?'туздук':x.g}</span>`).join('');
-  return {t,list};}
-function checkTask(i,ev,before){const T=TASKS[tut.i];
+function explain(X){const t=T(),M=taskMoves(X),b=M.find(x=>x.m===X.ans[0]),a=b.m+1,h=b.q%9+1;
+  let s=X.kind==='usetuz'?t.exUse(a,b.n,b.g):b.tuz?t.exTuz(a,b.n,h):b.q>=9?t.exCap(a,b.n,h,b.c,b.g):t.exOwn(a,b.g);
+  if(b.win)s+=t.exWin(b.k0+b.g);
+  return {t:s,list:M.map(x=>`<span class="${x.m===b.m?'best':''}">${t.li(x.m+1,x.tuz?t.tuzW:x.g)}</span>`).join('')}}
+function checkTask(i,ev,before){const X=TASKS[tut.i];
   tut.gain=S.k[0]-before.k[0];
-  tut.ok=T.kind==='tuz'?!!(ev&&ev.type==='tuz'):(T.kind==='win'||T.kind==='win2')?!!(S.over&&S.over.w===0):i===T.ans[0];
-  if(tut.ok&&!tut.best){solved[tut.i]=true;try{localStorage.setItem('tk-solved',JSON.stringify(solved))}catch(e){}}}
-function showTut(){$('tut').hidden=false;$('tRetry').hidden=true;$('tBest').hidden=true;$('tList').hidden=true;
-  if(tut.task){
-    if(tut.summary){$('tStep').textContent='Тапшырмалар бүттү';$('tT').textContent=`${TASKS.length} тапшырмадан ${solvedN()} туура`;
-      $('tP').textContent=solvedN()===TASKS.length?'Азаматсыз! Бардыгын чечтиңиз. Эми компьютерге каршы ойноп көрүңүз.':'Жакшы! Чечилбегендерин кайра аракет кылып көрүңүз.';
-      $('tNext').hidden=false;$('tNext').textContent='Кайра баштоо';$('tRetry').hidden=false;$('tRetry').textContent='Оюнга өтүү';return}
-    const T=TASKS[tut.i],[t,q]=TASK_TXT[T.kind],a=T.ans[0]+1;
-    $('tStep').textContent=`Тапшырма ${tut.i+1} / ${TASKS.length} · Чечилди: ${solvedN()}`;$('tT').textContent=t;
-    $('tBest').hidden=!!tut.ok;
-    if(tut.best){const E=explain(T);$('tList').innerHTML=E.list;$('tList').hidden=false}
-    if(!tut.done){$('tP').textContent=tut.best?'Мыкты жүрүш: '+explain(T).t+' Жылтылдаган үйдү басыңыз.':q.replace('{k}',T.k[0])+' Каалаган үйүңүздү басыңыз.';$('tNext').hidden=false;$('tNext').textContent='Өткөрүп жиберүү'}
-    else{$('tP').textContent=tut.ok?
-        (tut.best?'Туура (көрсөтмө менен). ':'Туура! ')+(T.kind==='tuz'?'Туздук алдыңыз.':(T.kind==='win'||T.kind==='win2')?`Сиз ${S.k[0]} коргоол менен жеңдиңиз!`:`${tut.gain} коргоол алдыңыз.`):
-        `Жок. Бул жүрүш ${tut.gain} коргоол берди. Туура жооп — ${a}-үй. Кайра аракет кылыңыз.`;
-      $('tNext').hidden=false;$('tNext').textContent=tut.i+1<TASKS.length?'Кийинки тапшырма':'Жыйынтык';
-      $('tRetry').hidden=tut.ok;$('tRetry').textContent='Кайра'}
-    return}
-  const L=LESSONS[tut.i];
-  $('tStep').textContent=`Сабак ${tut.i+1} / ${LESSONS.length}`;$('tT').textContent=L.t;
-  $('tP').textContent=tut.done?L.a:L.p;
-  $('tNext').hidden=L.target!=null&&!tut.done;$('tNext').textContent=L.end?'Тапшырмаларга өтүү':'Кийинки';}
-$('tNext').onclick=()=>{if(!tut)return;
-  if(tut.task){if(tut.summary)startTask(0);else startTask(tut.i+1);return}
-  if(LESSONS[tut.i].end)startTask(0);else startTut(tut.i+1)};
-$('tBest').onclick=()=>{if(!tut||!tut.task||tut.summary)return;const i=tut.i;startTask(i);tut.best=true;showTut();render()};
+  tut.ok=X.kind==='tuz'?!!(ev&&ev.type==='tuz'):(X.kind==='win'||X.kind==='win2')?!!(S.over&&S.over.w===0):i===X.ans[0];
+  if(tut.ok&&!tut.best){solved[tut.i]=true;store.set('tk-solved',JSON.stringify(solved))}}
+function showTut(){const t=T();$('tut').hidden=false;$('tRetry').hidden=true;$('tBest').hidden=true;$('tList').hidden=true;
+  if(tut.summary){$('tStep').textContent=t.tasksDone;$('tT').textContent=t.summary(TASKS.length,solvedN());
+    $('tP').textContent=solvedN()===TASKS.length?t.allSolved:t.someSolved;
+    $('tNext').textContent=t.restart;$('tRetry').hidden=false;$('tRetry').textContent=t.toGame;return}
+  const X=TASKS[tut.i],[ti,q]=t.task[X.kind],a=X.ans[0]+1;
+  $('tStep').textContent=t.stepLbl(tut.i+1,TASKS.length,solvedN());$('tT').textContent=ti;
+  $('tBest').hidden=!!tut.ok;
+  if(tut.best){$('tList').innerHTML=explain(X).list;$('tList').hidden=false}
+  if(!tut.done){$('tP').textContent=tut.best?t.bestPre+explain(X).t+t.tapGlow:q.replace('{k}',X.k[0])+t.tapAny;$('tNext').textContent=t.skip}
+  else{$('tP').textContent=tut.ok?(tut.best?t.correctHelp:t.correct)+(X.kind==='tuz'?t.madeTuz:(X.kind==='win'||X.kind==='win2')?t.winWith(S.k[0]):t.tookG(tut.gain)):t.wrong(tut.gain,a);
+    $('tNext').textContent=tut.i+1<TASKS.length?t.nextTask:t.results;
+    $('tRetry').hidden=tut.ok;$('tRetry').textContent=t.retry}}
+$('tNext').onclick=()=>{if(!tut)return;startTask(tut.summary?0:tut.i+1)};
+$('tBest').onclick=()=>{if(!tut||tut.summary)return;startTask(tut.i);tut.best=true;showTut();render()};
 $('tRetry').onclick=()=>{if(!tut)return;if(tut.summary)newGame();else startTask(tut.i)};
-$('tExit').onclick=newGame;$('taskBtn').onclick=()=>startTask(0);
+$('tExit').onclick=newGame;
 
+/* ---------- menu ---------- */
+let view='main';
+function openMenu(){$('drawer').classList.add('show');$('scrim').classList.add('show');$('drawer').setAttribute('aria-hidden','false');showView('main')}
+function closeMenu(){$('drawer').classList.remove('show');$('scrim').classList.remove('show');$('drawer').setAttribute('aria-hidden','true')}
+function showView(v){view=v;const t=T();
+  document.querySelectorAll('.view').forEach(e=>e.hidden=e.dataset.v!==v);
+  $('dBack').hidden=v==='main';$('dTitle').textContent=v==='main'?t.menu:t[v];
+  $('taskProg').textContent=`${solvedN()}/${TASKS.length}`;$('resetNote').textContent='';}
+function setSeg(id,val){document.querySelectorAll(`#${id} button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(val)))}
+function applyLang(){const t=T();document.documentElement.lang=lang;document.title=t.title;
+  document.querySelectorAll('[data-t]').forEach(e=>{const v=t[e.dataset.t];if(typeof v==='string')e.textContent=v});
+  document.querySelectorAll('#segMode button').forEach(b=>b.textContent=t.modes[b.dataset.v]);
+  document.querySelectorAll('#segLevel button').forEach(b=>b.textContent=t.levels[b.dataset.v]);
+  [...$('speed').options].forEach((o,i)=>o.textContent=t.speeds[i]);
+  $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
+  $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
+  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segAnim',anim?1:0);
+  $('levelBox').hidden=mode==='2p';
+  if($('drawer').classList.contains('show'))showView(view);
+  if(tut)showTut();render()}
+$('menuBtn').onclick=openMenu;$('dClose').onclick=closeMenu;$('scrim').onclick=closeMenu;$('dBack').onclick=()=>showView('main');
+addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView(b.dataset.go));
+$('mNew').onclick=()=>{closeMenu();newGame()};
+$('mTasks').onclick=()=>{closeMenu();startTask(0)};
+$('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
+$('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
+$('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
+$('segAnim').onclick=e=>{const b=e.target.closest('button');if(!b)return;anim=b.dataset.v==='1';store.set('tk-anim',anim?'1':'0');applyLang()};
+$('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone};
+
+/* ---------- controls ---------- */
 $('board').addEventListener('click',e=>{const h=e.target.closest('.hole.can');if(h)doMove(+h.dataset.i)});
-$('newBtn').onclick=newGame;$('again').onclick=newGame;
+$('newBtn').onclick=newGame;$('again').onclick=newGame;$('newTop').onclick=newGame;
 $('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;clearTimeout(timer);
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
   last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
 $('playBtn').onclick=()=>{paused=!paused;render();schedAI()};
 $('stepBtn').onclick=()=>{if(!paused||busy||S.over||mode!=='cc')return;doMove(bestMove(S,level))};
-$('speed').onchange=e=>{spd=+e.target.value;try{localStorage.setItem('tk-spd2',spd)}catch(x){}schedAI()};
-$('mode').onchange=e=>{mode=e.target.value;paused=false;try{localStorage.setItem('tk-mode',mode)}catch(x){}newGame()};
-$('level').onchange=e=>{level=+e.target.value;try{localStorage.setItem('tk-level',level)}catch(x){}};
+$('speed').value=String(spd);
+$('speed').onchange=e=>{spd=+e.target.value;store.set('tk-spd2',spd);schedAI()};
 let deferred=null;
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installBtn').hidden=false});
-$('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$('installBtn').hidden=true};
-addEventListener('appinstalled',()=>{$('installBtn').hidden=true});
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('mInstall').hidden=false});
+$('mInstall').onclick=async()=>{if(!deferred)return;closeMenu();deferred.prompt();await deferred.userChoice;deferred=null;$('mInstall').hidden=true};
+addEventListener('appinstalled',()=>{$('mInstall').hidden=true});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-newGame();
+S=fresh();applyLang();newGame();
 }
 </script>
 </body>
