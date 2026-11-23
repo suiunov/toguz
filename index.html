@@ -242,7 +242,6 @@ details{border:1px solid rgba(255,255,255,.08)}
 </div>
 <div class="ccbar" id="ccbar" hidden>
   <button class="b main" id="playBtn"></button>
-  <button class="b" id="stepBtn" data-t="step"></button>
   <label><span data-t="speed"></span> <select id="speed"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option></select></label>
 </div>
 <div class="ctrl">
@@ -291,7 +290,8 @@ details{border:1px solid rgba(255,255,255,.08)}
 const $=id=>document.getElementById(id);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let S,hist=[],busy=false,last=-1,land=-1,timer=null;
+let S,hist=[],busy=false,last=-1,land=-1,timer=null,animTimer=null,moveId=0;
+const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1};
 let mode=store.get('tk-mode','ai'),level=+store.get('tk-level',4),spd=+store.get('tk-spd2',1);
 let lang=store.get('tk-lang',(navigator.language||'').startsWith('ky')||(navigator.language||'').startsWith('ru')?'ky':(navigator.language||'').startsWith('en')?'en':'ky');
 let anim=+store.get('tk-anim2','1');if(!(anim>=0&&anim<=3))anim=1;
@@ -450,7 +450,6 @@ function render(){
   $('undoBtn').disabled=busy||hist.length===0||!!tut;
   $('undoBtn').hidden=mode==='cc';$('ccbar').hidden=mode!=='cc'||!!tut;
   $('playBtn').textContent=paused?t.play:t.pause;
-  $('stepBtn').disabled=!paused||busy||!!S.over;
   const dim=!S.over&&!tut;
   $('top').classList.toggle('idle',dim&&S.turn!==1);$('bot').classList.toggle('idle',dim&&S.turn!==0);
   $('modeLbl').textContent=tut?t.tasks:t.modes[mode]+(mode==='2p'?'':' · '+t.levels[level]);
@@ -476,25 +475,26 @@ function doMove(i){
   };
   if(reduced||(!anim&&!(mode==='cc'&&!tut))){done();return}
   const A=ANIM[anim]||ANIM[2],step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(A[0],Math.min(A[1],A[2]/frames.length));let f=0;
-  const tick=()=>{if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();timer=setTimeout(tick,step)}else done()};
+  const id=++moveId;
+  const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();animTimer=setTimeout(tick,step)}else done()};
   tick();
 }
 function aiMove(){if(!aiTurn()||busy)return;render();
-  setTimeout(()=>{if(aiTurn()&&!busy)doMove(bestMove(S,level))},30)}
+  timer=setTimeout(()=>{if(aiTurn()&&!busy)doMove(bestMove(S,level))},30)}
 function showOver(){
   const w=S.over.w,nm=names(),t=T();
   $('ovT').textContent=w<0?t.drawT:mode==='ai'?(w===0?t.youWin:t.compWins):t.wins(nm[w]);
   $('ovP').textContent=`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
   $('over').classList.add('show');
 }
-function newGame(){clearTimeout(timer);busy=false;tut=null;$('tut').hidden=true;S=fresh();
+function newGame(){stopAll();tut=null;$('tut').hidden=true;S=fresh();
   hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');render();schedAI()}
 
 /* ---------- tasks: find the best move ---------- */
 const TASKS=[{"b":[10,4,0,6,7,4,10,13,6,10,5,9,5,6,8,4,5,1],"k":[18,31],"t":[-1,2],"kind":"cap","ans":[4]},{"b":[4,7,10,5,4,0,6,9,10,7,6,8,8,8,7,9,4,8],"k":[7,35],"t":[-1,5],"kind":"cap","ans":[7]},{"b":[4,10,10,10,3,3,0,7,5,7,9,8,8,10,10,6,6,1],"k":[23,22],"t":[-1,6],"kind":"cap","ans":[1]},{"b":[6,7,9,7,9,17,7,13,9,9,7,5,7,9,4,6,8,7],"k":[9,7],"t":[-1,-1],"kind":"max","ans":[3]},{"b":[8,8,7,8,11,6,6,8,8,9,6,10,4,4,3,7,3,8],"k":[26,12],"t":[-1,-1],"kind":"max","ans":[8]},{"b":[12,9,5,6,4,9,6,3,11,5,10,6,11,2,2,13,6,6],"k":[10,26],"t":[-1,-1],"kind":"tuz","ans":[5]},{"b":[10,8,7,6,8,3,8,6,6,2,2,6,10,3,8,2,11,5],"k":[6,45],"t":[-1,-1],"kind":"tuz","ans":[0]},{"b":[6,6,12,8,7,8,11,8,9,3,5,5,0,7,4,4,5,5],"k":[31,18],"t":[12,-1],"kind":"usetuz","ans":[2]},{"b":[1,1,2,3,1,7,1,0,1,1,1,5,2,1,5,1,0,3],"k":[76,50],"t":[-1,-1],"kind":"win","ans":[5]},{"b":[0,0,4,1,1,3,1,3,3,5,2,1,5,3,2,2,0,2],"k":[76,48],"t":[-1,0],"kind":"win2","ans":[7]}];
 let solved=[];try{solved=JSON.parse(store.get('tk-solved','[]'))}catch(e){}
 const solvedN=()=>solved.filter(Boolean).length;
-function startTask(i){clearTimeout(timer);busy=false;$('over').classList.remove('show');
+function startTask(i){stopAll();$('over').classList.remove('show');
   if(i>=TASKS.length){tut={summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
   const X=TASKS[i];tut={i,done:false,ok:null,gain:0};
   S={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
@@ -561,11 +561,10 @@ $('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('setting
 /* ---------- controls ---------- */
 $('board').addEventListener('click',e=>{const h=e.target.closest('.hole.can');if(h)doMove(+h.dataset.i)});
 $('again').onclick=newGame;$('newTop').onclick=newGame;
-$('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;clearTimeout(timer);
+$('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;stopAll();
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
   last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
 $('playBtn').onclick=()=>{paused=!paused;render();schedAI()};
-$('stepBtn').onclick=()=>{if(!paused||busy||S.over||mode!=='cc')return;doMove(bestMove(S,level))};
 $('speed').value=String(spd);
 $('speed').onchange=e=>{spd=+e.target.value;store.set('tk-spd2',spd);schedAI()};
 let deferred=null;
