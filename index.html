@@ -278,8 +278,6 @@ details{border:1px solid rgba(255,255,255,.08)}
   <div class="view" data-v="settings" hidden>
     <div class="lbl" data-t="language"></div>
     <div class="seg" id="segLang"><button data-v="ky">Кыргызча</button><button data-v="en">English</button></div>
-    <div class="lbl" data-t="animation"></div>
-    <div class="seg" id="segAnim"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button></div>
     <div class="lbl" data-t="taskProgress"></div>
     <button class="mi" id="mReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-t="resetProgress"></span><em id="resetNote"></em></button>
   </div>
@@ -297,9 +295,6 @@ let S,hist=[],busy=false,last=-1,land=-1,timer=null,animTimer=null,moveId=0;
 const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1};
 let mode=store.get('tk-mode','ai'),level=+store.get('tk-level',4),spd=+store.get('tk-spd2',1);
 let lang=store.get('tk-lang',(navigator.language||'').startsWith('ky')||(navigator.language||'').startsWith('ru')?'ky':(navigator.language||'').startsWith('en')?'en':'ky');
-let anim=+store.get('tk-anim2','1');if(!(anim>=0&&anim<=3))anim=1;
-/* own-move animation: [min ms, max ms, total ms budget, pause before computer] */
-const ANIM=[null,[260,420,4500,1100],[160,280,3000,800],[60,120,1500,450]];
 if(!['ai','2p','cc'].includes(mode))mode='ai';
 
 /* ---------- texts ---------- */
@@ -416,7 +411,9 @@ function bestMove(s,d){
 
 /* ---------- game screen ---------- */
 let tut=null,paused=false;
-const SPEEDS=[[650,3000],[380,2000],[200,1200],[70,1000]];
+/* one speed for every mode: [ms per stone, pause between turns (computer vs computer), pause before the computer answers you] */
+const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450]];
+if(!(spd>=0&&spd<=3))spd=1;
 const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
 const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='ai'?[t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
 const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
@@ -460,7 +457,7 @@ function render(){
 function say(p,html){for(const q of [0,1]){const b=$('bub'+q);
   if(p==null){b.innerHTML='';b.classList.remove('old');continue}
   if(q===p){b.innerHTML=html;b.classList.remove('old','pop');void b.offsetWidth;b.classList.add('pop')}else b.classList.add('old')}}
-function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,mode==='cc'?SPEEDS[spd][1]:(ANIM[anim]?ANIM[anim][3]:450))}
+function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,SPEEDS[spd][mode==='cc'?1:2])}
 
 function doMove(i){
   if(busy||S.over)return;
@@ -476,8 +473,8 @@ function doMove(i){
     if(S.over)return showOver();
     schedAI();
   };
-  if(reduced||(!anim&&!(mode==='cc'&&!tut))){done();return}
-  const A=ANIM[anim]||ANIM[2],step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(A[0],Math.min(A[1],A[2]/frames.length));let f=0;
+  if(reduced){done();return}
+  const step=SPEEDS[spd][0];let f=0;
   const id=++moveId;
   const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();animTimer=setTimeout(tick,step)}else done()};
   tick();
@@ -543,10 +540,10 @@ function applyLang(){const t=T();document.documentElement.lang=lang;document.tit
   document.querySelectorAll('[data-t]').forEach(e=>{const v=t[e.dataset.t];if(typeof v==='string')e.textContent=v});
   document.querySelectorAll('#segMode button').forEach(b=>b.textContent=t.modes[b.dataset.v]);
   document.querySelectorAll('#segLevel button').forEach(b=>b.textContent=t.levels[b.dataset.v]);
-  document.querySelectorAll('#segSpeed button').forEach(b=>b.textContent=t.speeds[+b.dataset.v]);setSeg('segSpeed',spd);$('speedBox').hidden=mode!=='cc';
+  document.querySelectorAll('#segSpeed button').forEach(b=>b.textContent=t.speeds[+b.dataset.v]);setSeg('segSpeed',spd);
   $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
-  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segAnim',anim);document.querySelectorAll('#segAnim button').forEach(b=>b.textContent=t.anims[+b.dataset.v]);
+  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);
   $('levelBox').hidden=mode==='2p';
   if($('drawer').classList.contains('show'))showView(view);
   if(tut)showTut();render()}
@@ -558,7 +555,6 @@ $('mTasks').onclick=()=>{closeMenu();startTask(0)};
 $('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
 $('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
 $('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
-$('segAnim').onclick=e=>{const b=e.target.closest('button');if(!b)return;anim=+b.dataset.v;store.set('tk-anim2',anim);applyLang()};
 $('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone};
 
 /* ---------- controls ---------- */
