@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тогуз коргоол</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8c1c24">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Philosopher:wght@700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, playful, a game table in a yurt
+   IDEA: a carved walnut toguz korgool board laid on red shyrdak felt
+   PICTURE: the board itself — two rows of nine long holes, two kazans in the middle
+   COLOUR and TYPE: shyrdak red felt, walnut wood, bone-white stones, gold for tuzdyk; Rubik
+   LAYOUT: title, status, board (full width), controls, rules */
+:root{color-scheme:light dark;--bg:light-dark(#8c1c24,#3b0b11);--ink:#fff7ee;--soft:light-dark(#ffd9cf,#e7b9b2);
+--wood1:#9a6634;--wood2:#6d4220;--hole:#2e1a0c;--stone:#f6ecd8;--gold:#f4c247;--blue:#7cc7ff}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Rubik,system-ui,sans-serif;overflow-x:clip;
+background-image:radial-gradient(circle at 20% 0,rgba(255,255,255,.08),transparent 50%)}
+.wrap{max-width:760px;margin:0 auto;padding:16px max(3vw,10px) 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:clamp(28px,6vw,40px);line-height:1.05;margin:0;font-weight:800;letter-spacing:-.01em}
+.orn{height:22px;width:100%;margin:8px 0 12px;opacity:.55}
+.board{background:linear-gradient(170deg,var(--wood1),var(--wood2));border-radius:18px;padding:10px 8px;
+box-shadow:0 14px 30px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.18),inset 0 -3px 0 rgba(0,0,0,.25)}
+.row{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:clamp(3px,1vw,8px)}
+.nums{font-size:13px;text-align:center;color:#f3dcbf;opacity:.85;padding:2px 0}
+.hole{appearance:none;border:0;font:inherit;color:var(--ink);cursor:default;position:relative;
+height:clamp(118px,26vw,150px);border-radius:999px;background:var(--hole);
+box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.15);
+display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:10px 2px 8px;transition:box-shadow .15s,transform .15s}
+.hole.can{cursor:pointer;box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 0 0 2px rgba(255,255,255,.55)}
+.hole.can:hover{transform:translateY(-2px)}
+.hole:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hole.last{box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 0 0 3px var(--gold)}
+.hole.land{background:#4a2b14}
+.stones{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:2px;max-width:30px;padding-top:2px}
+.st{width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--stone) 55%,#b9a98a)}
+.cnt{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.tuz{background:repeating-linear-gradient(45deg,#3a220e 0 6px,#2a170a 6px 12px)}
+.tuz .cnt{color:var(--gold);font-size:22px;font-weight:800}
+.tuz.p1 .cnt{color:var(--blue)}
+.kz{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;
+margin:8px 0;padding:8px 14px;border-radius:999px;background:var(--hole);box-shadow:inset 0 4px 8px rgba(0,0,0,.7)}
+.kz b{font-size:22px;font-variant-numeric:tabular-nums;min-width:2.2ch;text-align:right}
+.kz span{font-size:14px;color:#f3dcbf;white-space:nowrap}
+.bar{height:10px;border-radius:9px;background:rgba(255,255,255,.1);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#d9c9a8,var(--stone));border-radius:9px;transition:width .3s}
+.bar::after{content:"";position:absolute;left:50.6%;top:0;bottom:0;width:2px;background:var(--gold)}
+.kz.on{box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 0 0 2px var(--gold)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+button.b,select{font:500 16px Rubik,system-ui,sans-serif;min-height:44px;padding:0 16px;border-radius:12px;
+border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);color:var(--ink);cursor:pointer}
+select option{color:#222}
+button.b.main{background:var(--gold);color:#3b1d05;border-color:var(--gold);font-weight:700}
+button.b:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button.b:disabled{opacity:.45;cursor:default}
+details{margin-top:22px;background:rgba(0,0,0,.18);border-radius:14px;padding:4px 16px}
+summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+details li{margin:6px 0;color:var(--soft)}details b{color:var(--ink)}
+.over{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);padding:20px;z-index:5}
+.over.show{display:grid}
+.card{background:linear-gradient(170deg,var(--wood1),var(--wood2));border-radius:20px;padding:26px 24px;text-align:center;max-width:340px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.card h2{margin:0 0 6px;font-size:32px;line-height:1.1}
+.card p{margin:0 0 18px;font-size:18px}
+.hole.hint{animation:pulse 1.1s ease-in-out infinite;cursor:pointer}
+@keyframes pulse{50%{box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 0 0 5px var(--gold);transform:translateY(-3px)}}
+.tut{background:rgba(0,0,0,.24);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.tut .step{font-size:13px;color:var(--soft)}
+.tut h3{margin:2px 0 6px;font-size:21px;line-height:1.2}
+.tut p{margin:0 0 12px;font-size:16px}
+.tbtns{display:flex;gap:10px;flex-wrap:wrap}
+.tlist{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px}
+.tlist span{font-size:14px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.25);color:var(--soft);white-space:nowrap}
+.tlist span.best{background:var(--gold);color:#3b1d05;font-weight:700}
+[hidden]{display:none!important}
+.bubbles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;min-height:74px;align-items:end}
+.bub{position:relative;justify-self:start;background:#fff7ee;color:#3a1a08;border-radius:16px;padding:8px 12px;font-size:15px;line-height:1.3;font-weight:500;margin-bottom:10px;box-shadow:0 6px 14px rgba(0,0,0,.28);transition:opacity .3s}
+.bub::after{content:"";position:absolute;bottom:-9px;left:20px;border:9px solid transparent;border-top-color:#fff7ee;border-bottom:0}
+.bub.r{justify-self:end;text-align:right}.bub.r::after{left:auto;right:20px}#bub1{background:#e6f4ff}#bub1::after{border-top-color:#e6f4ff}
+.bub:empty{visibility:hidden}
+.bub.old{opacity:.5}
+.bub b{color:#a3141f}#bub1 b{color:#0d5c9e}
+.bub.pop{animation:pop .35s cubic-bezier(.3,1.6,.6,1)}
+@keyframes pop{from{transform:scale(.6) translateY(10px);opacity:0}}
+.players{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
+.pl{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(0,0,0,.22);border:2px solid transparent;transition:border-color .2s,opacity .2s}
+.pl.r{flex-direction:row-reverse;text-align:right}
+.pl.on{border-color:var(--gold);background:rgba(0,0,0,.34);opacity:1}
+.pl{opacity:.7}
+.av{width:36px;height:36px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff,var(--stone) 55%,#b9a98a);box-shadow:0 3px 6px rgba(0,0,0,.35)}
+.pl#pl1 .av{background:radial-gradient(circle at 35% 30%,#f2faff,var(--blue) 55%,#3d86c2)}
+.pn{font-weight:700;font-size:17px;line-height:1.2;overflow-wrap:anywhere}
+.pst{font-size:13px;color:var(--soft)}
+.pl.on .pst{color:var(--gold);font-weight:500}
+.bar.r i{inset:0 0 0 auto}
+.kz{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:0!important;padding:0!important;border-radius:22px!important;min-height:56px;overflow:hidden}
+.kn{display:flex;align-items:center;padding:0 14px;font-weight:700;font-size:16px;color:#f3dcbf;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.kres{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 10px;border-left:2px solid rgba(255,255,255,.12)}
+.kz.r .kn{justify-content:flex-end}
+.kz.r .kres{justify-content:center;border-left:0;border-right:2px solid rgba(255,255,255,.12)}
+.kz b{font-size:clamp(24px,6vw,32px);min-width:2ch;text-align:center!important}
+.kz.r b{color:var(--blue)}
+.slots{--s:clamp(5px,1.5vw,8px);display:grid;grid-template-columns:repeat(3,auto);gap:3px}
+.kz.r .slots{direction:rtl}
+.slot{display:grid;grid-template-columns:repeat(3,var(--s));gap:1px;padding:2px;border-radius:4px;background:rgba(255,255,255,.07)}
+.slot i{width:var(--s);height:var(--s);border-radius:50%;background:rgba(255,255,255,.1)}
+.slot i.f{background:radial-gradient(circle at 35% 30%,#fff,var(--stone) 55%,#b9a98a)}
+.kz.r .slot i.f{background:radial-gradient(circle at 35% 30%,#f2faff,var(--blue) 55%,#3d86c2)}
+.slot.full{background:rgba(244,194,71,.35)}
+.plus{font-size:13px;font-weight:700;color:var(--gold)}
+.plus:empty{display:none}
+.slot.win{grid-column:2;outline:1.5px dashed rgba(244,194,71,.8);outline-offset:1px;background:rgba(244,194,71,.08)}
+.slot.win.won{outline-style:solid;outline-color:var(--gold);background:rgba(244,194,71,.4);box-shadow:0 0 8px rgba(244,194,71,.6)}
+.kc{display:flex;flex-direction:column;align-items:center;line-height:1.1;max-width:6.5em}
+.kzrow .kname{font-size:12px;font-weight:500;color:#f3dcbf;text-align:center;overflow-wrap:anywhere;margin-top:2px}
+.kzrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:8px 0}
+.kzrow .kz{display:flex!important;align-items:center;justify-content:center;gap:clamp(8px,2.5vw,16px);margin:0;padding:10px 8px!important;border-radius:20px!important}
+.row .hole{transition:opacity .25s,box-shadow .15s,transform .15s}
+.row.idle .hole{opacity:.45}
+.ccbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:10px;border-radius:16px;background:rgba(0,0,0,.22)}
+.ccbar label{display:flex;align-items:center;gap:8px;font-weight:500}
+#playBtn{min-width:8.5em}
+@media(max-width:420px){.stones{max-width:22px}.st{width:6px;height:6px}.cnt{font-size:14px}.kz{padding:6px 10px;gap:8px}}
+@media(prefers-reduced-motion:reduce){.bub.pop{animation:none}.hole,.bar i{transition:none}.hole.hint{animation:none;box-shadow:inset 0 4px 8px rgba(0,0,0,.7),0 0 0 4px var(--gold)}}
+
+
+/* kazan: ram-horn style */
+.kzrow .kz{display:flex!important;align-items:center;justify-content:center;gap:clamp(8px,2.5vw,16px)!important;padding:10px 6px!important}
+.kc{display:flex;flex-direction:column;align-items:center;gap:1px;max-width:none!important;min-width:0;color:#d9b45a}
+.kc .horn{width:clamp(50px,14vw,64px);height:auto;display:block;color:#d9b45a}
+.kzrow .kz.on .kc .horn{color:var(--gold)}
+.kzrow .kz b{font-size:clamp(30px,8.5vw,40px);font-weight:800;line-height:1;letter-spacing:-.02em;text-shadow:0 2px 0 rgba(0,0,0,.45);text-align:center!important}
+.kzrow .kz#kz0 b{color:#fff7ee}
+.kzrow .kname{display:block;font-size:clamp(13px,3.6vw,16px);font-weight:700;line-height:1.15;color:#d9b45a;text-align:center;max-width:7.5em;overflow-wrap:normal;margin-top:2px}
+.kzrow .kz.on .kname{color:var(--gold)}
+@media(max-width:420px){.slots{--s:5px!important;gap:2px!important}.slot{padding:1.5px!important}}
+/* ---- polish ---- */
+body{background-color:var(--bg);background-image:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.10),transparent 60%),radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.35),transparent 60%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.13' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M48 30c-10-12-28-8-28 6s16 14 18 6-8-10-10-4M48 30c10-12 28-8 28 6s-16 14-18 6 8-10 10-4M48 30v22M48 52l-8 8 8 8 8-8z'/%3E%3Cpath d='M0 0l8 8-8 8M96 0l-8 8 8 8M0 96l8-8-8-8M96 96l-8-8 8-8' stroke-opacity='.09'/%3E%3C/g%3E%3C/svg%3E");background-attachment:fixed}
+header{flex-direction:column;align-items:center!important;gap:0!important;text-align:center;padding-top:6px}
+header .sub{font-size:13px;color:var(--soft);font-weight:500}
+h1{font-family:Philosopher,Rubik,serif;font-size:clamp(34px,8vw,48px);letter-spacing:.01em;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.orn{opacity:.45;margin:6px 0 4px}
+.board{background:repeating-linear-gradient(91deg,rgba(0,0,0,.06) 0 2px,transparent 2px 11px),repeating-linear-gradient(89deg,rgba(255,235,200,.05) 0 1px,transparent 1px 23px),linear-gradient(170deg,#ad743c,#7c4b22 55%,#5c3517);
+  border:3px solid #43250f;padding:12px 9px;border-radius:22px;
+  box-shadow:0 22px 44px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,214,150,.22),inset 0 3px 0 rgba(255,255,255,.18),inset 0 -4px 0 rgba(0,0,0,.25)}
+.hole{background:radial-gradient(ellipse at 50% 25%,#3e2613,#1f1007 72%);
+  box-shadow:inset 0 7px 12px rgba(0,0,0,.85),inset 0 -2px 0 rgba(255,220,170,.14),0 1px 0 rgba(255,230,190,.28)}
+.hole.can{box-shadow:inset 0 7px 12px rgba(0,0,0,.85),0 0 0 2px rgba(255,236,200,.6),0 4px 10px rgba(0,0,0,.3)}
+.hole.last{box-shadow:inset 0 7px 12px rgba(0,0,0,.85),0 0 0 3px var(--gold),0 0 14px rgba(244,194,71,.45)}
+.st,.slot i.f{box-shadow:0 1px 1.5px rgba(0,0,0,.7),inset 0 -1px 1px rgba(0,0,0,.15)}
+.stones{gap:3px}
+.cnt{background:rgba(0,0,0,.35);border-radius:999px;min-width:26px;padding:1px 6px;text-align:center;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.tuz{background:repeating-linear-gradient(45deg,#3d2410 0 6px,#26150a 6px 12px)!important}
+.tuz .cnt{background:none;box-shadow:none;font-family:Philosopher,Rubik,serif}
+.kzrow .kz{background:radial-gradient(ellipse at 50% 20%,#3a2311,#1d0f06 75%);box-shadow:inset 0 7px 14px rgba(0,0,0,.85),0 1px 0 rgba(255,230,190,.28)}
+.kzrow .kz.on{box-shadow:inset 0 7px 14px rgba(0,0,0,.85),0 0 0 2px var(--gold),0 0 16px rgba(244,194,71,.35)}
+.slot{background:rgba(255,255,255,.05);box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+.slot.full{background:linear-gradient(rgba(244,194,71,.45),rgba(244,194,71,.25));box-shadow:0 0 6px rgba(244,194,71,.35)}
+.nums{font-weight:500;color:#f6e2c4;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.pl{background:linear-gradient(180deg,rgba(0,0,0,.30),rgba(0,0,0,.18));border:2px solid rgba(255,255,255,.08);box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.pl.on{border-color:var(--gold);box-shadow:0 0 0 4px rgba(244,194,71,.16),0 8px 20px rgba(0,0,0,.25)}
+.pl.on .av{box-shadow:0 0 0 3px var(--gold),0 3px 6px rgba(0,0,0,.35)}
+.bub{box-shadow:0 8px 18px rgba(0,0,0,.3)}
+.ctrl{background:rgba(0,0,0,.18);border-radius:18px;padding:12px;justify-content:center}
+.ccbar{justify-content:center}
+button.b{transition:transform .12s,background .2s}button.b:active{transform:scale(.96)}
+button.b.main{background:linear-gradient(#f8d36a,#e9ae2c);box-shadow:0 3px 0 #a6741a,0 6px 12px rgba(0,0,0,.25)}
+button.b.main:active{box-shadow:0 1px 0 #a6741a}
+details{border:1px solid rgba(255,255,255,.08)}
+@media(prefers-reduced-motion:reduce){button.b{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="sub">Кыргыздын улуттук оюну</div><h1>Тогуз коргоол</h1></header>
+<svg class="orn" viewBox="0 0 400 22" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><pattern id="horn" width="44" height="22" patternUnits="userSpaceOnUse">
+<path d="M2 20 C2 6 20 2 22 11 C24 2 42 6 42 20 M12 20c0-6 6-7 6-2 M32 20c0-6-6-7-6-2" fill="none" stroke="#fff7ee" stroke-width="2.4" stroke-linecap="round"/></pattern></defs>
+<rect width="400" height="22" fill="url(#horn)"/></svg>
+<div class="bubbles" aria-live="polite"><div class="bub" id="bub1"></div><div class="bub r" id="bub0"></div></div>
+<div class="players">
+  <div class="pl" id="pl1"><span class="av"></span><div><div class="pn" id="pn1"></div><div class="pst" id="pst1"></div></div></div>
+  <div class="pl r" id="pl0"><span class="av"></span><div><div class="pn" id="pn0"></div><div class="pst" id="pst0"></div></div></div>
+</div>
+<div class="tut" id="tut" hidden><div class="step" id="tStep"></div><h3 id="tT"></h3><p id="tP"></p><div class="tlist" id="tList" hidden></div>
+<div class="tbtns"><button class="b main" id="tNext">Кийинки</button><button class="b" id="tBest" hidden>Мыкты жүрүш</button><button class="b" id="tRetry" hidden>Кайра</button><button class="b" id="tExit">Чыгуу</button></div></div>
+
+<div class="board" id="board">
+  <div class="row nums" id="topNums"></div>
+  <div class="row" id="top"></div>
+  <div class="kzrow">
+    <div class="kz r" id="kz1"><div class="kc"><svg class="horn" viewBox="0 0 64 14" aria-hidden="true"><path d="M32 13C28 3 16 1 14 8s8 6 7 1M32 13C36 3 48 1 50 8s-8 6-7 1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><b id="k1">0</b><small class="kname" id="kn1"></small><span class="plus" id="px1"></span></div><div class="slots" id="sl1"></div></div>
+    <div class="kz" id="kz0"><div class="slots" id="sl0"></div><div class="kc"><svg class="horn" viewBox="0 0 64 14" aria-hidden="true"><path d="M32 13C28 3 16 1 14 8s8 6 7 1M32 13C36 3 48 1 50 8s-8 6-7 1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><b id="k0">0</b><small class="kname" id="kn0"></small><span class="plus" id="px0"></span></div></div>
+  </div>
+  <div class="row" id="bot"></div>
+  <div class="row nums" id="botNums"></div>
+</div>
+<div class="ccbar" id="ccbar" hidden>
+  <button class="b main" id="playBtn">Тыным</button>
+  <button class="b" id="stepBtn">Бир жүрүш ›</button>
+  <label>Ылдамдык <select id="speed"><option value="0">Өтө жай</option><option value="1">Жай</option><option value="2">Орто</option><option value="3">Тез</option></select></label>
+</div>
+
+<div class="ctrl">
+  <button class="b main" id="installBtn" hidden>Телефонго орнотуу</button>
+  <button class="b main" id="newBtn">Жаңы оюн</button>
+  <button class="b" id="undoBtn">Артка</button>
+  <button class="b" id="taskBtn">Тапшырмалар</button>
+  <select id="mode" aria-label="Оюн түрү"><option value="ai">Компьютерге каршы</option><option value="2p">2 оюнчу</option><option value="cc">Компьютер өзү ойнойт</option></select>
+  <select id="level" aria-label="Деңгээл"><option value="1">Жеңил</option><option value="4" selected>Орто</option><option value="8">Оор</option></select>
+</div>
+
+<details>
+<summary>Оюндун эрежелери</summary>
+<ul>
+<li>Ар бир оюнчунун <b>9 үйү</b> бар, ар биринде 9 коргоолдон, жана бир <b>казаны</b> бар. Бардыгы 162 коргоол.</li>
+<li>Кезегиңизде өз үйлөрүңүздүн бирин басыңыз. Андагы бардык коргоолдор алынат: <b>биринчи коргоол ошол эле үйгө кайра коюлат</b>, калгандары саат жебесине каршы бирден кийинки үйлөргө таратылат. Үйдө бир гана коргоол болсо, ал кийинки үйгө өтөт.</li>
+<li>Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.</li>
+<li>Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын түстө, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Чектөөлөр: бир оюнда бир гана туздук алууга болот, каршылаштын 9-үйүнөн туздук алууга болбойт, жана каршылаштын туздугу менен бирдей номердеги үйдөн алууга болбойт.</li>
+<li><b>82 же андан көп</b> коргоол чогулткан оюнчу жеңет. 81–81 болсо, тең чыгат. Эгер оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы калган коргоолдорду алат жана оюн бүтөт.</li>
+</ul>
+</details>
+</div>
+
+<div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button class="b main" id="again">Кайра ойноо</button></div></div>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let S,hist=[],busy=false,last=-1,land=-1,timer=null;
+let mode='ai',level=4;
+try{mode=localStorage.getItem('tk-mode')||'ai';level=+(localStorage.getItem('tk-level')||4)}catch(e){}
+$('mode').value=mode;$('level').value=String(level);
+
+const clone=s=>({b:s.b.slice(),k:s.k.slice(),t:s.t.slice(),turn:s.turn,over:s.over});
+function legal(s){const o=s.turn*9,r=[];for(let i=o;i<o+9;i++)if(s.b[i]>0)r.push(i);return r}
+function drop(s,pos){if(s.t[0]===pos)s.k[0]++;else if(s.t[1]===pos)s.k[1]++;else s.b[pos]++}
+
+/* one move; frames (optional) collects a snapshot after each stone */
+function apply(s,i,frames){
+  const p=s.turn,n=s.b[i];s.b[i]=0;let pos=i,ev=null;
+  const snap=q=>frames&&frames.push({s:clone(s),q});
+  if(n===1){pos=(i+1)%18;drop(s,pos);snap(pos)}
+  else{drop(s,i);snap(i);for(let j=1;j<n;j++){pos=(pos+1)%18;drop(s,pos);snap(pos)}}
+  const side=pos>=9?1:0;
+  if(side!==p&&s.t[0]!==pos&&s.t[1]!==pos){
+    const c=s.b[pos];
+    if(c%2===0){s.k[p]+=c;s.b[pos]=0;ev={type:'cap',n:c}}
+    else if(c===3&&s.t[p]<0&&pos%9!==8&&!(s.t[1-p]>=0&&s.t[1-p]%9===pos%9)){
+      s.t[p]=pos;s.k[p]+=3;s.b[pos]=0;ev={type:'tuz',h:pos%9+1}}
+  }
+  s.turn=1-p;
+  if(s.k[p]>81)s.over={w:p};
+  else if(legal(s).length===0){
+    const o=p*9;for(let j=o;j<o+9;j++){s.k[p]+=s.b[j];s.b[j]=0}
+    s.over={w:s.k[0]>s.k[1]?0:s.k[1]>s.k[0]?1:-1};
+  }
+  snap(pos);
+  return ev;
+}
+
+/* computer: alpha-beta minimax */
+function evalS(s,me){return s.k[me]-s.k[1-me]+(s.t[me]>=0?8:0)-(s.t[1-me]>=0?8:0)}
+function search(s,d,a,bt,me){
+  if(s.over){const w=s.over.w;return w===me?1e5+d:w<0?0:-1e5-d}
+  if(d===0)return evalS(s,me);
+  const ms=legal(s),max=s.turn===me;let v=max?-1e9:1e9;
+  for(const m of ms){const c=clone(s);apply(c,m);const x=search(c,d-1,a,bt,me);
+    if(max){if(x>v)v=x;if(v>a)a=v}else{if(x<v)v=x;if(v<bt)bt=v}if(a>=bt)break}
+  return v;
+}
+function bestMove(s,d){
+  const me=s.turn,ms=legal(s);
+  if(d===1&&Math.random()<.35)return ms[Math.floor(Math.random()*ms.length)];
+  let bm=ms[0],bv=-1e9;
+  for(const m of ms){const c=clone(s);apply(c,m);const v=search(c,d-1,-1e9,1e9,me);
+    if(v>bv||(v===bv&&Math.random()<.3)){bv=v;bm=m}}
+  return bm;
+}
+
+let tut=null,paused=false,spd=1;
+/* [ms per stone, break between turns ms] */
+const SPEEDS=[[650,3000],[380,2000],[200,1200],[70,1000]];
+try{const v=localStorage.getItem('tk-spd2');if(v!==null)spd=+v}catch(e){}
+$('speed').value=String(spd);
+const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
+const pos=(b,k,t)=>({b,k:k||[0,0],t:t||[-1,-1],turn:0,over:null});
+const LESSONS=[
+{t:'Тактай',p:'Төмөнкү катар — сиздин 9 үйүңүз, үстүңкү катар — каршылаштыкы. Ар бир үйдө 9 коргоолдон. Ортодогу узун тилкелер — казандар: утуп алган коргоолдор ошол жакка түшөт. Казанда 9 чарчы бар, ар бири 9 коргоол (3×3) батырат — ошентип оңой санайсыз.',s:fresh},
+{t:'Жүрүш',p:'Жылтылдап турган 1-үйүңүздү басыңыз.',s:fresh,target:0,a:'Бардык 9 коргоол алынды: биринчиси ошол эле 1-үйгө кайра түштү, калган 8и 2–9-үйлөргө бирден таратылды. Коргоолдор дайыма саат жебесине каршы жылат: сиздин катарыңыз солдон оңго, каршылаштыкы оңдон солго.'},
+{t:'Бир коргоол',p:'5-үйдө бир гана коргоол бар. Аны басыңыз.',s:()=>pos([3,4,2,6,1,5,3,2,4,5,3,6,2,4,3,5,2,4]),target:4,a:'Үйдө бир гана коргоол болсо, ал кийинки үйгө өтөт, ал эми үй бош калат.'},
+{t:'Утуу',p:'9-үйүңүздө 2 коргоол, каршылаштын 1-үйүндө 5 коргоол. 9-үйүңүздү басыңыз.',s:()=>pos([4,4,4,4,4,4,4,4,2,5,4,4,4,4,4,4,4,4]),target:8,a:'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоол 6 болду — жуп сан. Ошондуктан 6 коргоолдун баары сиздин казаныңызга өттү! Так сан болсо, эч нерсе утулбайт.'},
+{t:'Туздук',p:'Эми каршылаштын 1-үйүндө 2 коргоол. 9-үйүңүздү басыңыз — ал жакта 3 болот.',s:()=>pos([4,4,4,4,4,4,4,4,2,2,4,4,4,4,4,4,4,4]),target:8,a:'Каршылаштын үйүндө так 3 коргоол болду — ал үй эми сиздин туздугуңуз (алтын «Т»), 3 коргоол казаныңызга өттү. Бир оюнда бир гана туздук алса болот, каршылаштын 9-үйүнөн алууга болбойт, каршылаштын туздугу менен бирдей номердеги үйдөн да болбойт.'},
+{t:'Туздуктун пайдасы',p:'Каршылаштын 1-үйү — сиздин туздугуңуз. 8-үйүңүздү басып, коргоол ага кантип түшөөрүн көрүңүз.',s:()=>pos([4,4,4,4,4,4,4,3,4,0,4,4,4,4,4,4,4,4],[3,0],[9,-1]),target:7,a:'Туздукка түшкөн ар бир коргоол дароо сиздин казаныңызга барат — каршылаш өзү да ага коргоол салып берет. Туздук оюн аягына чейин иштейт.'},
+{t:'Жеңиш',p:'Казандагы 9 чарчынын баары толсо — 81 коргоол. Дагы бир коргоол алсаңыз (82), жеңесиз! Жалпысынан 162 коргоол. 81–81 — тең. Бир оюнчунун жүрүш жасаганга коргоолу калбаса, оюн бүтөт. Ийгилик!',s:fresh,end:true}
+];
+const names=()=>tut?['Сиз','Каршылаш']:mode==='ai'?['Сиз','Компьютер']:mode==='cc'?['Компьютер 1','Компьютер 2']:['1-оюнчу','2-оюнчу'];
+const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
+
+function holeHTML(i){
+  const n=S.b[i],own=S.t[0]===i?0:S.t[1]===i?1:-1;
+  const hint=tut&&!tut.done&&(tut.task?(tut.best&&TASKS[tut.i]&&TASKS[tut.i].ans[0]===i):tut.target===i);
+  const canClick=tut?(tut.task?(!busy&&!tut.done&&i<9&&n>0):(hint&&!busy)):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
+  const cls=['hole',canClick?'can':'',hint?'hint':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
+  const dots=own>=0?'':'<span class="st"></span>'.repeat(Math.min(n,30));
+  const lab=own>=0?'Т':n;
+  const who=Math.floor(i/9)===0?names()[0]:names()[1];
+  return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${who}, ${i%9+1}-үй: ${own>=0?'туздук':n+' коргоол'}"><span class="stones">${dots}</span><span class="cnt">${lab}</span></button>`;
+}
+function render(){
+  const top=[],bot=[];for(let i=17;i>=9;i--)top.push(i);for(let i=0;i<9;i++)bot.push(i);
+  $('top').innerHTML=top.map(holeHTML).join('');$('bot').innerHTML=bot.map(holeHTML).join('');
+  $('topNums').innerHTML=top.map(i=>`<span>${i-8}</span>`).join('');
+  $('botNums').innerHTML=bot.map(i=>`<span>${i+1}</span>`).join('');
+  const nm=names();
+  for(const p of [0,1]){$('k'+p).textContent=S.k[p];$('kn'+p).textContent=nm[p];$('sl'+p).innerHTML=slotsHTML(S.k[p]);$('px'+p).textContent=S.k[p]>81?'+'+(S.k[p]-81):'';
+    $('kz'+p).classList.toggle('on',!S.over&&S.turn===p)}
+  for(const p of [0,1]){$('pn'+p).textContent=nm[p];$('pst'+p).textContent=stTxt(p);
+    $('pl'+p).classList.toggle('on',tut?p===0:!S.over&&S.turn===p||(S.over&&S.over.w===p))}
+  $('undoBtn').disabled=busy||hist.length===0||!!tut;
+  $('undoBtn').hidden=mode==='cc';$('ccbar').hidden=mode!=='cc'||!!tut;
+  $('playBtn').textContent=paused?'Ойнотуу':'Тыным';
+  $('stepBtn').disabled=!paused||busy||!!S.over;
+  const dim=!S.over&&!tut;
+  $('top').classList.toggle('idle',dim&&S.turn!==1);$('bot').classList.toggle('idle',dim&&S.turn!==0);
+  $('level').style.display=mode==='2p'?'none':'';
+}
+
+function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
+  o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}
+  return o}
+function stTxt(p){
+  if(tut)return p===0?'Үйрөнүүдө':'';
+  if(S.over)return S.over.w===p?'Жеңүүчү':S.over.w<0?'Тең':'';
+  if(S.turn!==p)return 'Күтүүдө';
+  if(mode==='cc')return paused?'Тыным':'Ойлонууда…';
+  if(mode==='ai')return p===1?'Ойлонууда…':'Сиздин кезегиңиз';
+  return 'Кезек';
+}
+function say(p,html){for(const q of [0,1]){const b=$('bub'+q);
+  if(p==null){b.innerHTML='';b.classList.remove('old');continue}
+  if(q===p){b.innerHTML=html;b.classList.remove('old','pop');void b.offsetWidth;b.classList.add('pop')}else b.classList.add('old')}}
+function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,mode==='cc'?SPEEDS[spd][1]:450)}
+
+function doMove(i){
+  if(busy||S.over)return;
+  hist.push(clone(S));
+  const frames=[],s=clone(S),p=S.turn,ev=apply(s,i,frames);
+  const nm=names(),you=(tut||mode==='ai')&&p===0,vb=you?'алдыңыз':'алды';
+  const mv=`${i%9+1}-үйдөн жүрдү${you?'ңүз':''}.`;
+  last=i;busy=true;say(p,mv);
+  const done=()=>{S=s;land=-1;busy=false;
+    if(ev){const b=$('bub'+p);b.innerHTML=mv+' <b>'+(ev.type==='cap'?`${ev.n} коргоол ${vb}!`:`Туздук ${vb} (${ev.h}-үй)!`)+'</b>';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
+    if(tut){tut.done=true;if(tut.task)checkTask(i,ev,hist[hist.length-1]);showTut();render();return}
+    render();
+    if(S.over)return showOver();
+    schedAI();
+  };
+  if(reduced){done();return}
+  const step=mode==='cc'&&!tut?SPEEDS[spd][0]:Math.max(30,Math.min(110,1500/frames.length));let f=0;
+  const tick=()=>{if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();timer=setTimeout(tick,step)}else done()};
+  tick();
+}
+function aiMove(){if(!aiTurn()||busy)return;render();
+  setTimeout(()=>{if(aiTurn()&&!busy)doMove(bestMove(S,level))},30)}
+function showOver(){
+  const w=S.over.w,nm=names();
+  $('ovT').textContent=w<0?'Тең чыкты':mode==='ai'?(w===0?'Сиз жеңдиңиз!':'Компьютер жеңди'):nm[w]+' жеңди!';
+  $('ovP').textContent=`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
+  $('over').classList.add('show');
+}
+function newGame(){clearTimeout(timer);busy=false;tut=null;$('tut').hidden=true;S=fresh();
+  hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');render();schedAI()}
+
+/* tutorial lessons */
+function startTut(i){clearTimeout(timer);busy=false;$('over').classList.remove('show');
+  const L=LESSONS[i];tut={i,target:L.target??-1,done:false};S=L.s();hist=[];last=-1;land=-1;say(null);showTut();render();
+  $('tut').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})}
+
+/* tasks: find the best move (positions checked with the game rules) */
+const TASKS=[{"b":[10,4,0,6,7,4,10,13,6,10,5,9,5,6,8,4,5,1],"k":[18,31],"t":[-1,2],"kind":"cap","ans":[4]},{"b":[4,7,10,5,4,0,6,9,10,7,6,8,8,8,7,9,4,8],"k":[7,35],"t":[-1,5],"kind":"cap","ans":[7]},{"b":[4,10,10,10,3,3,0,7,5,7,9,8,8,10,10,6,6,1],"k":[23,22],"t":[-1,6],"kind":"cap","ans":[1]},{"b":[6,7,9,7,9,17,7,13,9,9,7,5,7,9,4,6,8,7],"k":[9,7],"t":[-1,-1],"kind":"max","ans":[3]},{"b":[8,8,7,8,11,6,6,8,8,9,6,10,4,4,3,7,3,8],"k":[26,12],"t":[-1,-1],"kind":"max","ans":[8]},{"b":[12,9,5,6,4,9,6,3,11,5,10,6,11,2,2,13,6,6],"k":[10,26],"t":[-1,-1],"kind":"tuz","ans":[5]},{"b":[10,8,7,6,8,3,8,6,6,2,2,6,10,3,8,2,11,5],"k":[6,45],"t":[-1,-1],"kind":"tuz","ans":[0]},{"b":[6,6,12,8,7,8,11,8,9,3,5,5,0,7,4,4,5,5],"k":[31,18],"t":[12,-1],"kind":"usetuz","ans":[2]},{"b":[1,1,2,3,1,7,1,0,1,1,1,5,2,1,5,1,0,3],"k":[76,50],"t":[-1,-1],"kind":"win","ans":[5]},{"b":[0,0,4,1,1,3,1,3,3,5,2,1,5,3,2,2,0,2],"k":[76,48],"t":[-1,0],"kind":"win2","ans":[7]}];
+const TASK_TXT={
+  cap:['Коргоол ут','Бир гана жүрүш каршылаштын коргоолдорун утат. Ошол үйдү табыңыз.'],
+  max:['Эң көп ут','Бир нече жүрүш утат. Эң көп коргоол бере турганын табыңыз.'],
+  tuz:['Туздук ал','Туздук алып бере турган жүрүштү табыңыз: акыркы коргоол каршылаштын үйүндө так 3 кылышы керек.'],
+  usetuz:['Туздукту колдон','Сиздин туздугуңуз бар (алтын «Т»). Казанга эң көп коргоол киргизе турган жүрүштү табыңыз — туздукка түшкөндөрү да эсептелет.'],
+  win:['Жеңиш жүрүшү','Казаныңызда {k} коргоол. 82ге жетип, оюнду бир жүрүш менен утуп алыңыз!'],
+  win2:['Жеңиш жүрүшү 2','Казаныңызда {k} коргоол. Жеңе турган бир гана жүрүш бар — абайлаңыз, азгыруу да бар!']};
+let solved=[];try{solved=JSON.parse(localStorage.getItem('tk-solved')||'[]')}catch(e){}
+const solvedN=()=>solved.filter(Boolean).length;
+function startTask(i){clearTimeout(timer);busy=false;$('over').classList.remove('show');
+  if(i>=TASKS.length){tut={task:true,summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
+  const T=TASKS[i];tut={task:true,i,done:false,ok:null,gain:0};
+  S={b:T.b.slice(),k:T.k.slice(),t:T.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
+  $('tut').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})}
+
+function taskMoves(T){const s={b:T.b.slice(),k:T.k.slice(),t:T.t.slice(),turn:0,over:null};
+  return legal(s).map(m=>{const c=clone(s),fr=[],ev=apply(c,m,fr);const pre=fr.length>1?fr[fr.length-2]:fr[0];
+    return {m,g:c.k[0]-s.k[0],tuz:!!(ev&&ev.type==='tuz'),win:!!(c.over&&c.over.w===0),n:s.b[m],q:pre.q,c:pre.s.b[pre.q],k0:s.k[0]}})}
+function explain(T){const M=taskMoves(T),b=M.find(x=>x.m===T.ans[0]),a=b.m+1,h=b.q%9+1,opp=b.q>=9;
+  let t;
+  if(T.kind==='usetuz')t=`${a}-үйдө ${b.n} коргоол. Алар туздугуңуз аркылуу өтөт — туздукка түшкөнү дароо казаныңызга барат. Жалпы ${b.g} коргоол.`;
+  else if(b.tuz)t=`${a}-үйдө ${b.n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол так 3 болот — туздук!`;
+  else if(opp)t=`${a}-үйдө ${b.n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол ${b.c} болот — жуп сан, ${b.g} коргоол сизге!`;
+  else t=`${a}-үйдөн жүрүңүз: ${b.g} коргоол.`;
+  if(b.win)t+=` Казаныңыз ${b.k0+b.g} болот — жеңиш!`;
+  const list=M.map(x=>`<span class="${x.m===b.m?'best':''}">${x.m+1}-үй → ${x.tuz?'туздук':x.g}</span>`).join('');
+  return {t,list};}
+function checkTask(i,ev,before){const T=TASKS[tut.i];
+  tut.gain=S.k[0]-before.k[0];
+  tut.ok=T.kind==='tuz'?!!(ev&&ev.type==='tuz'):(T.kind==='win'||T.kind==='win2')?!!(S.over&&S.over.w===0):i===T.ans[0];
+  if(tut.ok&&!tut.best){solved[tut.i]=true;try{localStorage.setItem('tk-solved',JSON.stringify(solved))}catch(e){}}}
+function showTut(){$('tut').hidden=false;$('tRetry').hidden=true;$('tBest').hidden=true;$('tList').hidden=true;
+  if(tut.task){
+    if(tut.summary){$('tStep').textContent='Тапшырмалар бүттү';$('tT').textContent=`${TASKS.length} тапшырмадан ${solvedN()} туура`;
+      $('tP').textContent=solvedN()===TASKS.length?'Азаматсыз! Бардыгын чечтиңиз. Эми компьютерге каршы ойноп көрүңүз.':'Жакшы! Чечилбегендерин кайра аракет кылып көрүңүз.';
+      $('tNext').hidden=false;$('tNext').textContent='Кайра баштоо';$('tRetry').hidden=false;$('tRetry').textContent='Оюнга өтүү';return}
+    const T=TASKS[tut.i],[t,q]=TASK_TXT[T.kind],a=T.ans[0]+1;
+    $('tStep').textContent=`Тапшырма ${tut.i+1} / ${TASKS.length} · Чечилди: ${solvedN()}`;$('tT').textContent=t;
+    $('tBest').hidden=!!tut.ok;
+    if(tut.best){const E=explain(T);$('tList').innerHTML=E.list;$('tList').hidden=false}
+    if(!tut.done){$('tP').textContent=tut.best?'Мыкты жүрүш: '+explain(T).t+' Жылтылдаган үйдү басыңыз.':q.replace('{k}',T.k[0])+' Каалаган үйүңүздү басыңыз.';$('tNext').hidden=false;$('tNext').textContent='Өткөрүп жиберүү'}
+    else{$('tP').textContent=tut.ok?
+        (tut.best?'Туура (көрсөтмө менен). ':'Туура! ')+(T.kind==='tuz'?'Туздук алдыңыз.':(T.kind==='win'||T.kind==='win2')?`Сиз ${S.k[0]} коргоол менен жеңдиңиз!`:`${tut.gain} коргоол алдыңыз.`):
+        `Жок. Бул жүрүш ${tut.gain} коргоол берди. Туура жооп — ${a}-үй. Кайра аракет кылыңыз.`;
+      $('tNext').hidden=false;$('tNext').textContent=tut.i+1<TASKS.length?'Кийинки тапшырма':'Жыйынтык';
+      $('tRetry').hidden=tut.ok;$('tRetry').textContent='Кайра'}
+    return}
+  const L=LESSONS[tut.i];
+  $('tStep').textContent=`Сабак ${tut.i+1} / ${LESSONS.length}`;$('tT').textContent=L.t;
+  $('tP').textContent=tut.done?L.a:L.p;
+  $('tNext').hidden=L.target!=null&&!tut.done;$('tNext').textContent=L.end?'Тапшырмаларга өтүү':'Кийинки';}
+$('tNext').onclick=()=>{if(!tut)return;
+  if(tut.task){if(tut.summary)startTask(0);else startTask(tut.i+1);return}
+  if(LESSONS[tut.i].end)startTask(0);else startTut(tut.i+1)};
+$('tBest').onclick=()=>{if(!tut||!tut.task||tut.summary)return;const i=tut.i;startTask(i);tut.best=true;showTut();render()};
+$('tRetry').onclick=()=>{if(!tut)return;if(tut.summary)newGame();else startTask(tut.i)};
+$('tExit').onclick=newGame;$('taskBtn').onclick=()=>startTask(0);
+
+$('board').addEventListener('click',e=>{const h=e.target.closest('.hole.can');if(h)doMove(+h.dataset.i)});
+$('newBtn').onclick=newGame;$('again').onclick=newGame;
+$('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;clearTimeout(timer);
+  S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
+  last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
+$('playBtn').onclick=()=>{paused=!paused;render();schedAI()};
+$('stepBtn').onclick=()=>{if(!paused||busy||S.over||mode!=='cc')return;doMove(bestMove(S,level))};
+$('speed').onchange=e=>{spd=+e.target.value;try{localStorage.setItem('tk-spd2',spd)}catch(x){}schedAI()};
+$('mode').onchange=e=>{mode=e.target.value;paused=false;try{localStorage.setItem('tk-mode',mode)}catch(x){}newGame()};
+$('level').onchange=e=>{level=+e.target.value;try{localStorage.setItem('tk-level',level)}catch(x){}};
+let deferred=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installBtn').hidden=false});
+$('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$('installBtn').hidden=true};
+addEventListener('appinstalled',()=>{$('installBtn').hidden=true});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+newGame();
+}
+</script>
+</body>
+</html>
