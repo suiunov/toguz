@@ -218,13 +218,33 @@ details{border:1px solid rgba(255,255,255,.08)}
 .ctrl button.b{max-width:260px}
 .ctrl button.b{width:100%}
 @media(prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
+/* ---- features from the Gemini version ---- */
+.appbar{grid-template-columns:auto minmax(0,1fr) auto!important}.abr{gap:6px!important}
+.appbar .ib{width:40px;height:40px}.ttl b{font-size:clamp(18px,5.4vw,24px)!important}
+#sndTop .x{display:none}#sndTop.off .x{display:inline}#sndTop.off .w{display:none}#sndTop.off{color:var(--soft)}
+.seg.col button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:54px;line-height:1.15}
+.seg.col button small{font-size:12px;font-weight:400;opacity:.8}
+#segLevel button{font-size:14px;padding:0 4px}#segSpeed button{font-size:13px!important;line-height:1.1}
+.note{font-size:13px;color:var(--soft);margin:6px 4px 0;line-height:1.4}
+.hole.aim{box-shadow:inset 0 7px 12px rgba(0,0,0,.85),0 0 0 3px #62e08d,0 0 16px rgba(98,224,141,.6)!important}
+.thead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tnav{display:flex;gap:6px}.ib:disabled{opacity:.35;cursor:default}.ib.sm{width:38px;height:38px}.ib.sm svg{width:20px;height:20px}
+.lvtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-inline-start:6px;vertical-align:1px}
+.lv0{background:#2f7d4f;color:#e6ffef}.lv1{background:#2f6a9e;color:#e6f4ff}.lv2{background:#a0611c;color:#fff1de}.lv3{background:#7a2bb0;color:#f6e9ff}
+.thint{background:rgba(98,224,141,.14);border:1px solid rgba(98,224,141,.45);border-radius:12px;padding:8px 12px;margin:-4px 0 12px;font-size:15px}
+.tbtns .b{padding:0 12px;font-size:15px}
+.tl{display:flex;flex-direction:column;gap:8px}
+.tl button{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 10px;text-align:start;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:var(--ink);font:500 16px Rubik,system-ui,sans-serif;cursor:pointer;min-height:56px}
+.tl button.cur{border-color:var(--gold)}.tl button small{grid-column:1;font-size:13px;color:var(--soft);font-weight:400}
+.tl .ok{grid-row:1/3;grid-column:2;width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:15px}
+.tl .ok.y{background:var(--gold);border-color:var(--gold);color:#3b1d05}
 </style>
 </head>
 <body>
 <div class="appbar">
   <div class="abl"><button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   <div class="ttl"><b data-t="title"></b><small id="modeLbl"></small></div>
-  <div class="abr"><button class="ib" id="playTop" hidden aria-label="Pause"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z"/></svg></button><button class="ib" id="newTop" aria-label="New game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button></div>
+  <div class="abr"><button class="ib" id="sndTop" aria-label="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button><button class="ib" id="playTop" hidden aria-label="Pause"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z"/></svg></button><button class="ib" id="newTop" aria-label="New game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button></div>
 </div>
 <div class="wrap">
 <div class="bubbles" aria-live="polite"><div class="bub" id="bub1"></div><div class="bub r" id="bub0"></div></div>
@@ -232,8 +252,10 @@ details{border:1px solid rgba(255,255,255,.08)}
   <div class="pl" id="pl1"><span class="av"></span><div><div class="pn" id="pn1"></div><div class="pst" id="pst1"></div></div></div>
   <div class="pl r" id="pl0"><span class="av"></span><div><div class="pn" id="pn0"></div><div class="pst" id="pst0"></div></div></div>
 </div>
-<div class="tut" id="tut" hidden><div class="step" id="tStep"></div><h3 id="tT"></h3><p id="tP"></p><div class="tlist" id="tList" hidden></div>
-<div class="tbtns"><button class="b main" id="tNext"></button><button class="b" id="tBest" hidden data-t="bestBtn"></button><button class="b" id="tRetry" hidden></button><button class="b" id="tExit" data-t="exit"></button></div></div>
+<div class="tut" id="tut" hidden>
+<div class="thead"><div class="step" id="tStep"></div><div class="tnav"><button class="ib sm" id="tPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="ib sm" id="tFwd" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
+<h3 id="tT"></h3><p id="tP"></p><div class="thint" id="tHint" hidden></div><div class="tlist" id="tList" hidden></div>
+<div class="tbtns"><button class="b main" id="tNext" hidden></button><button class="b" id="tRetry" hidden></button><button class="b" id="tHintBtn" data-t="hintBtn"></button><button class="b" id="tBest" hidden data-t="bestBtn"></button><button class="b" id="tAll" data-t="allTasks"></button><button class="b" id="tExit" data-t="exit"></button></div></div>
 
 <div class="board" id="board">
   <div class="row nums" id="topNums"></div>
@@ -264,9 +286,9 @@ details{border:1px solid rgba(255,255,255,.08)}
     <div class="lbl" data-t="mode"></div>
     <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="cc"></button></div>
     <div id="levelBox"><div class="lbl" data-t="level"></div>
-    <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button></div></div>
+    <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button><button data-v="99"></button></div></div>
     <div id="speedBox"><div class="lbl" data-t="speed"></div>
-    <div class="seg" id="segSpeed"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button></div></div>
+    <div class="seg" id="segSpeed"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button><button data-v="4"></button></div></div>
     <div class="sep"></div>
     <button class="mi" id="mTasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg><span data-t="tasks"></span><em id="taskProg"></em></button>
     <button class="mi" data-go="rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10l4 4v12H5z M9 12h6M9 16h6M9 8h3"/></svg><span data-t="rules"></span></button>
@@ -274,10 +296,16 @@ details{border:1px solid rgba(255,255,255,.08)}
     <button class="mi" id="mInstall" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3"/></svg><span data-t="install"></span></button>
     <button class="mi" data-go="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-t="about"></span></button>
   </div>
+  <div class="view" data-v="tasklist" hidden><div class="tl" id="taskListBox"></div></div>
   <div class="view" data-v="rules" hidden><ol class="rules" id="rulesList"></ol></div>
   <div class="view" data-v="settings" hidden>
     <div class="lbl" data-t="language"></div>
     <div class="seg" id="segLang"><button data-v="ky">Кыргызча</button><button data-v="en">English</button></div>
+    <div class="lbl" data-t="sound"></div>
+    <div class="seg" id="segSound"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
+    <div class="lbl" data-t="preview"></div>
+    <div class="seg" id="segAim"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
+    <p class="note" data-t="previewSub"></p>
     <div class="lbl" data-t="taskProgress"></div>
     <button class="mi" id="mReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-t="resetProgress"></span><em id="resetNote"></em></button>
   </div>
@@ -300,9 +328,9 @@ if(!['ai','2p','cc'].includes(mode))mode='ai';
 /* ---------- texts ---------- */
 const TX={
 ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
-  speeds:['Өтө жай','Жай','Орто','Тез'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор'},
+  speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',cc:'Компьютерлердин беттешин көрүү'},
   menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
-  language:'Тил',animation:'Анимация',anims:['Өчүк','Жай','Орто','Тез'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
+  language:'Тил',on:'Күйүк',off:'Өчүк',sound:'Үн',preview:'Жүрүштү алдын ала көрүү',previewSub:'Акыркы коргоол түшө турган үй жашыл жарык менен көрүнөт. Компьютерде чычканды үйгө алып барыңыз, телефондо үйдү басып кармаңыз.',hintBtn:'Кеңеш',allTasks:'Бардык тапшырмалар',tasklist:'Тапшырмалар',lv:['Башталгыч','Орто','Татаал','Чебер'],hintCap:(h,x)=>`Каршылаштын ${h}-үйүн караңыз (азыр ${x} коргоол). Акыркы коргоолу так ошол жерге түшө турган үйүңүздү табыңыз.`,hintTuz:(h,x)=>`Каршылаштын ${h}-үйүндө ${x} коргоол бар — дагы бир коргоол түшсө, 3 болот.`,hintUse:h=>`Туздугуңуз — каршылаштын ${h}-үйү. Ал аркылуу өтүп, анан дагы жуп сан түзгөн жүрүштү издеңиз.`,names:['Биринчи түшүм','Так сокку','Жашыруун олжо','Эң чоң олжо','Алыс сокку','Туздук ачуу','Туздук издөө','Туздук түтүгү','Акыркы сокку','Чебердин эсеби'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
   you:'Сиз',computer:'Компьютер',opponent:'Каршылаш',player:n=>`${n}-оюнчу`,comp:n=>`Компьютер ${n}`,
   winner:'Жеңүүчү',draw:'Тең',waiting:'Күтүүдө',paused:'Тыным',thinking:'Ойлонууда…',yourTurn:'Сиздин кезегиңиз',turn:'Кезек',taskSt:'Тапшырма',
   played:(h,y)=>`${h}-үйдөн жүрдү${y?'ңүз':''}.`,took:(n,y)=>`${n} коргоол ${y?'алдыңыз':'алды'}!`,tuzT:(h,y)=>`Туздук ${y?'алдыңыз':'алды'} (${h}-үй)!`,
@@ -313,7 +341,7 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
   wrong:(g,a)=>`Жок. Бул жүрүш ${g} коргоол берди. Туура жооп — ${a}-үй. Кайра аракет кылыңыз.`,
   nextTask:'Кийинки тапшырма',results:'Жыйынтык',retry:'Кайра',toGame:'Оюнга өтүү',restart:'Кайра баштоо',tasksDone:'Тапшырмалар бүттү',
   summary:(n,s)=>`${n} тапшырмадан ${s} туура`,allSolved:'Азаматсыз! Бардыгын чечтиңиз. Эми компьютерге каршы ойноп көрүңүз.',someSolved:'Жакшы! Чечилбегендерин кайра аракет кылып көрүңүз.',
-  stepLbl:(i,n,s)=>`Тапшырма ${i} / ${n} · Чечилди: ${s}`,bestPre:'Мыкты жүрүш: ',tapGlow:' Жылтылдаган үйдү басыңыз.',
+  stepLbl:(i,n)=>`Тапшырма ${i} / ${n}`,bestPre:'Мыкты жүрүш: ',tapGlow:' Жылтылдаган үйдү басыңыз.',
   li:(m,v)=>`${m}-үй → ${v}`,tuzW:'туздук',
   exUse:(a,n,g)=>`${a}-үйдө ${n} коргоол. Алар туздугуңуз аркылуу өтөт — туздукка түшкөнү дароо казаныңызга барат. Жалпы ${g} коргоол.`,
   exTuz:(a,n,h)=>`${a}-үйдө ${n} коргоол. Акыркысы каршылаштын ${h}-үйүнө түшүп, андагы коргоол так 3 болот — туздук!`,
@@ -330,11 +358,11 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
     'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.',
     'Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Бир оюнда бир гана туздук; каршылаштын 9-үйүнөн жана анын туздугу менен бирдей номердеги үйдөн алууга болбойт.',
     'Казандагы 9 чарчы толсо — 81. <b>82 же андан көп</b> чогулткан оюнчу жеңет. 81–81 — тең. Оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы коргоолдорду алат жана оюн бүтөт.'],
-  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.1.'},
+  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.2.'},
 en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
-  speeds:['Very slow','Slow','Normal','Fast'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard'},
+  speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',cc:'Watch the computers play'},
   menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
-  language:'Language',animation:'Animation',anims:['Off','Slow','Normal','Fast'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
+  language:'Language',on:'On',off:'Off',sound:'Sound',preview:'Landing preview',previewSub:'The hole where your last stone will land glows green. On a computer, hover over a hole; on a phone, press and hold it.',hintBtn:'Hint',allTasks:'All tasks',tasklist:'Tasks',lv:['Beginner','Intermediate','Advanced','Master'],hintCap:(h,x)=>`Look at the opponent\u2019s hole ${h} (${x} stones now). Which of your holes drops its last stone right there?`,hintTuz:(h,x)=>`The opponent\u2019s hole ${h} has ${x} stones — one more makes 3.`,hintUse:h=>`Your tuzdyk is the opponent\u2019s hole ${h}. Find a move that passes through it and still makes an even number.`,names:['First Harvest','Clean Shot','Hidden Prize','Biggest Haul','Long-Range Strike','Open a Tuzdyk','Tuzdyk Hunt','Tuz Pipeline','Final Blow','Master\u2019s Calculation'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
   you:'You',computer:'Computer',opponent:'Opponent',player:n=>`Player ${n}`,comp:n=>`Computer ${n}`,
   winner:'Winner',draw:'Draw',waiting:'Waiting',paused:'Paused',thinking:'Thinking…',yourTurn:'Your turn',turn:'Turn',taskSt:'Task',
   played:(h,y)=>`Played hole ${h}.`,took:(n,y)=>`Took ${n}!`,tuzT:(h,y)=>`Tuzdyk on hole ${h}!`,
@@ -345,7 +373,7 @@ en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',
   wrong:(g,a)=>`Not quite. That move gave ${g}. The answer is hole ${a}. Try again.`,
   nextTask:'Next task',results:'Results',retry:'Retry',toGame:'Go to game',restart:'Start again',tasksDone:'Tasks finished',
   summary:(n,s)=>`${s} of ${n} correct`,allSolved:'Well done! You solved them all. Now try playing the computer.',someSolved:'Good! Try the unsolved ones again.',
-  stepLbl:(i,n,s)=>`Task ${i} / ${n} · Solved: ${s}`,bestPre:'Best move: ',tapGlow:' Tap the glowing hole.',
+  stepLbl:(i,n)=>`Task ${i} / ${n}`,bestPre:'Best move: ',tapGlow:' Tap the glowing hole.',
   li:(m,v)=>`Hole ${m} → ${v}`,tuzW:'tuzdyk',
   exUse:(a,n,g)=>`Hole ${a} has ${n} stones. They pass through your tuzdyk, and every stone landing there goes straight to your kazan. ${g} stones in total.`,
   exTuz:(a,n,h)=>`Hole ${a} has ${n} stones. The last one lands in the opponent's hole ${h}, making exactly 3 — a tuzdyk!`,
@@ -362,7 +390,7 @@ en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',
     'If your last stone lands in an opponent’s hole and makes the count <b>even</b>, you take them all into your kazan.',
     'If it makes exactly <b>3</b>, that hole becomes your <b>tuzdyk</b> (gold for you, blue for the opponent): the 3 stones are yours, and every stone that later falls in goes to your kazan. One tuzdyk per player; never the opponent’s 9th hole, and not the same number as the opponent’s tuzdyk.',
     'Nine full squares in the kazan is 81. Collect <b>82 or more</b> to win; 81–81 is a draw. If a player has no stones to move, the other player takes the stones left on their side and the game ends.'],
-  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.1.'}};
+  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.2.'}};
 const T=()=>TX[lang];
 
 /* ---------- rules engine ---------- */
@@ -409,11 +437,49 @@ function bestMove(s,d){
   return bm;
 }
 
+/* master: deepens the search until the time is up, best moves first */
+function masterMove(s,budget=1500){
+  const me=s.turn,t0=Date.now(),end=t0+budget;let nodes=0;
+  const STOP={};
+  function sr(x,d,a,bt){if((++nodes&1023)===0&&Date.now()>end)throw STOP;
+    if(x.over){const w=x.over.w;return w===me?1e5+d:w<0?0:-1e5-d}
+    if(d===0)return evalS(x,me);
+    const ms=legal(x),max=x.turn===me;let v=max?-1e9:1e9;
+    for(const m of ms){const c=clone(x);apply(c,m);const y=sr(c,d-1,a,bt);
+      if(max){if(y>v)v=y;if(v>a)a=v}else{if(y<v)v=y;if(v<bt)bt=v}if(a>=bt)break}
+    return v}
+  let order=legal(s),best=order[0];
+  for(let d=2;d<=16;d++){const sc=[];let a=-1e9,bm=order[0];
+    try{for(const m of order){const c=clone(s);apply(c,m);const v=sr(c,d-1,a,1e9);sc.push([m,v]);if(v>a){a=v;bm=m}}}catch(e){if(e===STOP)break;throw e}
+    best=bm;order=sc.sort((x,y)=>y[1]-x[1]).map(x=>x[0]);
+    if(a>=1e5||Date.now()-t0>budget*.45)break}
+  return best}
+const pick=s=>level===99?masterMove(s):bestMove(s,level);
+
+/* ---------- sound (made in the browser, no files) ---------- */
+let sound=store.get('tk-sound','1')==='1',AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t0,dur,type='sine',vol=.18){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;
+  const s=a.currentTime+t0;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(vol,s+.008);g.gain.exponentialRampToValueAtTime(.0001,s+dur);
+  o.connect(g).connect(a.destination);o.start(s);o.stop(s+dur+.02)}
+function sfx(k){if(!sound)return;try{
+  if(k==='drop')tone(520+Math.random()*120,0,.07,'triangle',.12);
+  else if(k==='cap'){tone(660,0,.14);tone(880,.09,.2)}
+  else if(k==='tuz'){tone(523,0,.15);tone(659,.1,.15);tone(784,.2,.3)}
+  else if(k==='win'){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.35))}
+  else if(k==='lose'){tone(330,0,.25,'sine',.15);tone(247,.2,.4,'sine',.15)}
+  else if(k==='ok'){tone(784,0,.12);tone(1047,.08,.25)}
+  else if(k==='bad'){tone(220,0,.25,'square',.06)}
+}catch(e){}}
+addEventListener('pointerdown',()=>{if(sound)ac()},{once:true});
+
 /* ---------- game screen ---------- */
-let tut=null,paused=false;
+let tut=null,paused=false,aimOn=store.get('tk-aim','1')==='1',aimFrom=-1;
+const landing=(s,i)=>{const n=s.b[i];return n===1?(i+1)%18:(i+n-1)%18};
 /* one speed for every mode: [ms per stone, pause between turns (computer vs computer), pause before the computer answers you] */
-const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450]];
-if(!(spd>=0&&spd<=3))spd=1;
+const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450],[0,700,400]];
+if(!(spd>=0&&spd<=4))spd=1;
+if(![1,4,8,99].includes(level))level=4;
 const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
 const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='ai'?[t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
 const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
@@ -422,7 +488,8 @@ function holeHTML(i){
   const n=S.b[i],own=S.t[0]===i?0:S.t[1]===i?1:-1;
   const hint=tut&&!tut.done&&tut.best&&TASKS[tut.i]&&TASKS[tut.i].ans[0]===i;
   const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
-  const cls=['hole',canClick?'can':'',hint?'hint':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
+  const aim=aimOn&&aimFrom>=0&&S.b[aimFrom]>0&&landing(S,aimFrom)===i;
+  const cls=['hole',canClick?'can':'',hint?'hint':'',aim?'aim':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
   const dots=own>=0?'':'<span class="st"></span>'.repeat(Math.min(n,30));
   const who=Math.floor(i/9)===0?names()[0]:names()[1];
   return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}"><span class="stones">${dots}</span><span class="cnt">${own>=0?T().tz:n}</span></button>`;
@@ -468,35 +535,38 @@ function doMove(i){
   last=i;busy=true;say(p,mv);
   const done=()=>{S=s;land=-1;busy=false;
     if(ev){const b=$('bub'+p);b.innerHTML=mv+' <b>'+(ev.type==='cap'?t.took(ev.n,you):t.tuzT(ev.h,you))+'</b>';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
-    if(tut){tut.done=true;checkTask(i,ev,hist[hist.length-1]);showTut();render();return}
+    if(ev)sfx(ev.type==='cap'?'cap':'tuz');
+    if(tut){tut.done=true;checkTask(i,ev,hist[hist.length-1]);sfx(tut.ok?'ok':'bad');showTut();render();return}
     render();
     if(S.over)return showOver();
     schedAI();
   };
-  if(reduced){done();return}
+  if(reduced||!SPEEDS[spd][0]){done();return}
   const step=SPEEDS[spd][0];let f=0;
   const id=++moveId;
-  const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();animTimer=setTimeout(tick,step)}else done()};
+  const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();sfx('drop');animTimer=setTimeout(tick,step)}else done()};
   tick();
 }
 function aiMove(){if(!aiTurn()||busy)return;render();
-  timer=setTimeout(()=>{if(aiTurn()&&!busy)doMove(bestMove(S,level))},30)}
+  timer=setTimeout(()=>{if(aiTurn()&&!busy)doMove(pick(S))},30)}
 function showOver(){
   const w=S.over.w,nm=names(),t=T();
   $('ovT').textContent=w<0?t.drawT:mode==='ai'?(w===0?t.youWin:t.compWins):t.wins(nm[w]);
   $('ovP').textContent=`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
   $('over').classList.add('show');
+  sfx(w<0?'cap':(mode==='ai'&&w===1)?'lose':'win');
 }
-function newGame(){stopAll();tut=null;$('tut').hidden=true;S=fresh();
+function newGame(){stopAll();aimFrom=-1;tut=null;$('tut').hidden=true;S=fresh();
   hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');render();schedAI()}
 
 /* ---------- tasks: find the best move ---------- */
+const TASK_LV=[0,0,0,1,1,1,2,2,2,3];
 const TASKS=[{"b":[10,4,0,6,7,4,10,13,6,10,5,9,5,6,8,4,5,1],"k":[18,31],"t":[-1,2],"kind":"cap","ans":[4]},{"b":[4,7,10,5,4,0,6,9,10,7,6,8,8,8,7,9,4,8],"k":[7,35],"t":[-1,5],"kind":"cap","ans":[7]},{"b":[4,10,10,10,3,3,0,7,5,7,9,8,8,10,10,6,6,1],"k":[23,22],"t":[-1,6],"kind":"cap","ans":[1]},{"b":[6,7,9,7,9,17,7,13,9,9,7,5,7,9,4,6,8,7],"k":[9,7],"t":[-1,-1],"kind":"max","ans":[3]},{"b":[8,8,7,8,11,6,6,8,8,9,6,10,4,4,3,7,3,8],"k":[26,12],"t":[-1,-1],"kind":"max","ans":[8]},{"b":[12,9,5,6,4,9,6,3,11,5,10,6,11,2,2,13,6,6],"k":[10,26],"t":[-1,-1],"kind":"tuz","ans":[5]},{"b":[10,8,7,6,8,3,8,6,6,2,2,6,10,3,8,2,11,5],"k":[6,45],"t":[-1,-1],"kind":"tuz","ans":[0]},{"b":[6,6,12,8,7,8,11,8,9,3,5,5,0,7,4,4,5,5],"k":[31,18],"t":[12,-1],"kind":"usetuz","ans":[2]},{"b":[1,1,2,3,1,7,1,0,1,1,1,5,2,1,5,1,0,3],"k":[76,50],"t":[-1,-1],"kind":"win","ans":[5]},{"b":[0,0,4,1,1,3,1,3,3,5,2,1,5,3,2,2,0,2],"k":[76,48],"t":[-1,0],"kind":"win2","ans":[7]}];
 let solved=[];try{solved=JSON.parse(store.get('tk-solved','[]'))}catch(e){}
 const solvedN=()=>solved.filter(Boolean).length;
 function startTask(i){stopAll();$('over').classList.remove('show');
   if(i>=TASKS.length){tut={summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
-  const X=TASKS[i];tut={i,done:false,ok:null,gain:0};
+  const X=TASKS[i];tut={i,done:false,ok:null,gain:0,hint:false};aimFrom=-1;
   S={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
   scrollTo({top:0,behavior:reduced?'auto':'smooth'})}
 function taskMoves(X){const s={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};
@@ -506,26 +576,39 @@ function explain(X){const t=T(),M=taskMoves(X),b=M.find(x=>x.m===X.ans[0]),a=b.m
   let s=X.kind==='usetuz'?t.exUse(a,b.n,b.g):b.tuz?t.exTuz(a,b.n,h):b.q>=9?t.exCap(a,b.n,h,b.c,b.g):t.exOwn(a,b.g);
   if(b.win)s+=t.exWin(b.k0+b.g);
   return {t:s,list:M.map(x=>`<span class="${x.m===b.m?'best':''}">${t.li(x.m+1,x.tuz?t.tuzW:x.g)}</span>`).join('')}}
+function hintText(X){const t=T(),M=taskMoves(X),b=M.find(x=>x.m===X.ans[0]),h=b.q%9+1,x=X.b[b.q];
+  if(X.kind==='usetuz')return t.hintUse(X.t[0]%9+1);
+  if(b.tuz)return t.hintTuz(h,x);
+  return t.hintCap(h,x)}
+function taskList(){const t=T();$('taskListBox').innerHTML=TASKS.map((X,i)=>`<button data-i="${i}" class="${tut&&!tut.summary&&tut.i===i?'cur':''}">${i+1}. ${t.names[i]}<small>${t.lv[TASK_LV[i]]} · ${t.task[X.kind][0]}</small><span class="ok ${solved[i]?'y':''}">${solved[i]?'✓':''}</span></button>`).join('')}
+$('taskListBox').onclick=e=>{const b=e.target.closest('button');if(!b)return;closeMenu();startTask(+b.dataset.i)};
 function checkTask(i,ev,before){const X=TASKS[tut.i];
   tut.gain=S.k[0]-before.k[0];
   tut.ok=X.kind==='tuz'?!!(ev&&ev.type==='tuz'):(X.kind==='win'||X.kind==='win2')?!!(S.over&&S.over.w===0):i===X.ans[0];
   if(tut.ok&&!tut.best){solved[tut.i]=true;store.set('tk-solved',JSON.stringify(solved))}}
-function showTut(){const t=T();$('tut').hidden=false;$('tRetry').hidden=true;$('tBest').hidden=true;$('tList').hidden=true;
+function showTut(){const t=T();$('tut').hidden=false;$('tRetry').hidden=true;$('tBest').hidden=true;$('tList').hidden=true;$('tHint').hidden=true;
+  $('tPrev').disabled=!!tut.summary||tut.i===0;$('tFwd').disabled=!!tut.summary;$('tHintBtn').hidden=true;$('tNext').hidden=true;
   if(tut.summary){$('tStep').textContent=t.tasksDone;$('tT').textContent=t.summary(TASKS.length,solvedN());
     $('tP').textContent=solvedN()===TASKS.length?t.allSolved:t.someSolved;
-    $('tNext').textContent=t.restart;$('tRetry').hidden=false;$('tRetry').textContent=t.toGame;return}
-  const X=TASKS[tut.i],[ti,q]=t.task[X.kind],a=X.ans[0]+1;
-  $('tStep').textContent=t.stepLbl(tut.i+1,TASKS.length,solvedN());$('tT').textContent=ti;
-  $('tBest').hidden=!!tut.ok;
+    $('tNext').hidden=false;$('tNext').textContent=t.restart;$('tRetry').hidden=false;$('tRetry').textContent=t.toGame;return}
+  const X=TASKS[tut.i],[,q]=t.task[X.kind],a=X.ans[0]+1,lv=TASK_LV[tut.i];
+  $('tStep').innerHTML=`${t.stepLbl(tut.i+1,TASKS.length)}<span class="lvtag lv${lv}">${t.lv[lv]}</span>${solved[tut.i]?' <span class="lvtag" style="background:var(--gold);color:#3b1d05">✓</span>':''}`;
+  $('tT').textContent=t.names[tut.i];
+  $('tBest').hidden=!!tut.ok;$('tHintBtn').hidden=!!tut.done||!!tut.best||!!tut.hint;
+  if(tut.hint&&!tut.done&&!tut.best){$('tHint').textContent=hintText(X);$('tHint').hidden=false}
   if(tut.best){$('tList').innerHTML=explain(X).list;$('tList').hidden=false}
-  if(!tut.done){$('tP').textContent=tut.best?t.bestPre+explain(X).t+t.tapGlow:q.replace('{k}',X.k[0])+t.tapAny;$('tNext').textContent=t.skip}
+  if(!tut.done){$('tP').textContent=tut.best?t.bestPre+explain(X).t+t.tapGlow:q.replace('{k}',X.k[0])+t.tapAny;}
   else{$('tP').textContent=tut.ok?(tut.best?t.correctHelp:t.correct)+(X.kind==='tuz'?t.madeTuz:(X.kind==='win'||X.kind==='win2')?t.winWith(S.k[0]):t.tookG(tut.gain)):t.wrong(tut.gain,a);
-    $('tNext').textContent=tut.i+1<TASKS.length?t.nextTask:t.results;
+    $('tNext').hidden=false;$('tNext').textContent=tut.i+1<TASKS.length?t.nextTask:t.results;
     $('tRetry').hidden=tut.ok;$('tRetry').textContent=t.retry}}
 $('tNext').onclick=()=>{if(!tut)return;startTask(tut.summary?0:tut.i+1)};
 $('tBest').onclick=()=>{if(!tut||tut.summary)return;startTask(tut.i);tut.best=true;showTut();render()};
 $('tRetry').onclick=()=>{if(!tut)return;if(tut.summary)newGame();else startTask(tut.i)};
 $('tExit').onclick=newGame;
+$('tPrev').onclick=()=>{if(tut&&!tut.summary&&tut.i>0)startTask(tut.i-1)};
+$('tFwd').onclick=()=>{if(tut&&!tut.summary)startTask(tut.i+1)};
+$('tHintBtn').onclick=()=>{if(!tut||tut.done)return;tut.hint=true;showTut()};
+$('tAll').onclick=()=>{openMenu();showView('tasklist')};
 
 /* ---------- menu ---------- */
 let view='main';
@@ -534,16 +617,17 @@ function closeMenu(){$('drawer').classList.remove('show');$('scrim').classList.r
 function showView(v){view=v;const t=T();
   document.querySelectorAll('.view').forEach(e=>e.hidden=e.dataset.v!==v);
   $('dBack').hidden=v==='main';$('dTitle').textContent=v==='main'?t.menu:t[v];
-  $('taskProg').textContent=`${solvedN()}/${TASKS.length}`;$('resetNote').textContent='';}
+  $('taskProg').textContent=`${solvedN()}/${TASKS.length}`;$('resetNote').textContent='';if(v==='tasklist')taskList();}
 function setSeg(id,val){document.querySelectorAll(`#${id} button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(val)))}
 function applyLang(){const t=T();document.documentElement.lang=lang;document.title=t.title;
   document.querySelectorAll('[data-t]').forEach(e=>{const v=t[e.dataset.t];if(typeof v==='string')e.textContent=v});
-  document.querySelectorAll('#segMode button').forEach(b=>b.textContent=t.modes[b.dataset.v]);
+  document.querySelectorAll('#segMode button').forEach(b=>b.innerHTML=`${t.modes[b.dataset.v]}<small>${t.modeSub[b.dataset.v]}</small>`);
   document.querySelectorAll('#segLevel button').forEach(b=>b.textContent=t.levels[b.dataset.v]);
   document.querySelectorAll('#segSpeed button').forEach(b=>b.textContent=t.speeds[+b.dataset.v]);setSeg('segSpeed',spd);
   $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
-  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);
+  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segSound',sound?1:0);setSeg('segAim',aimOn?1:0);
+  $('sndTop').classList.toggle('off',!sound);$('sndTop').setAttribute('aria-label',t.sound+': '+(sound?t.on:t.off));
   $('levelBox').hidden=mode==='2p';
   if($('drawer').classList.contains('show'))showView(view);
   if(tut)showTut();render()}
@@ -551,14 +635,26 @@ $('menuBtn').onclick=openMenu;$('dClose').onclick=closeMenu;$('scrim').onclick=c
 addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView(b.dataset.go));
 $('mNew').onclick=()=>{closeMenu();newGame()};
-$('mTasks').onclick=()=>{closeMenu();startTask(0)};
+$('mTasks').onclick=()=>showView('tasklist');
 $('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
 $('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
 $('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
-$('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone};
+$('segSound').onclick=e=>{const b=e.target.closest('button');if(!b)return;sound=b.dataset.v==='1';store.set('tk-sound',sound?'1':'0');applyLang();sfx('ok')};
+$('sndTop').onclick=()=>{sound=!sound;store.set('tk-sound',sound?'1':'0');applyLang();sfx('ok')};
+$('segAim').onclick=e=>{const b=e.target.closest('button');if(!b)return;aimOn=b.dataset.v==='1';store.set('tk-aim',aimOn?'1':'0');aimFrom=-1;applyLang()};
+$('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone;if(tut)showTut()};
 
 /* ---------- controls ---------- */
-$('board').addEventListener('click',e=>{const h=e.target.closest('.hole.can');if(h)doMove(+h.dataset.i)});
+let holdT=null,held=false;
+const setAim=i=>{if(aimFrom!==i){aimFrom=i;render()}};
+$('board').addEventListener('click',e=>{if(held){held=false;return}const h=e.target.closest('.hole.can');if(h){aimFrom=-1;doMove(+h.dataset.i)}});
+$('board').addEventListener('pointerover',e=>{if(e.pointerType!=='mouse'||!aimOn)return;const h=e.target.closest('.hole.can');setAim(h?+h.dataset.i:-1)});
+$('board').addEventListener('pointerleave',()=>{if(aimFrom>=0)setAim(-1)});
+$('board').addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'||!aimOn)return;const h=e.target.closest('.hole.can');if(!h)return;
+  const i=+h.dataset.i;held=false;clearTimeout(holdT);holdT=setTimeout(()=>{held=true;setAim(i)},280)});
+addEventListener('pointerup',()=>{clearTimeout(holdT);if(held){setAim(-1);setTimeout(()=>held=false,400)}});
+addEventListener('pointercancel',()=>{clearTimeout(holdT);held=false;setAim(-1)});
+$('board').addEventListener('contextmenu',e=>{if(e.target.closest('.hole'))e.preventDefault()});
 $('again').onclick=newGame;$('newTop').onclick=newGame;
 $('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;stopAll();
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
