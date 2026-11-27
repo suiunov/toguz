@@ -253,10 +253,14 @@ class Btn extends StatelessWidget {
           child: Container(
             constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            alignment: Alignment.center,
-            child: Text(text,
-                style: TextStyle(
-                    fontSize: 15, fontWeight: main ? FontWeight.w700 : FontWeight.w500, color: main ? C.goldInk : C.ink)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(text,
+                    style: TextStyle(
+                        fontSize: 15, fontWeight: main ? FontWeight.w700 : FontWeight.w500, color: main ? C.goldInk : C.ink)),
+              ],
+            ),
           ),
         ),
       ),
