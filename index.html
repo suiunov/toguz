@@ -218,6 +218,22 @@ details{border:1px solid rgba(255,255,255,.08)}
 .ctrl button.b{max-width:260px}
 .ctrl button.b{width:100%}
 @media(prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
+/* ---- holes: fixed size, 2 x 9 stones per layer, extra stones stack on top ---- */
+.hole{height:clamp(134px,36vw,176px)!important;padding:9px 2px 7px!important}
+.stones{position:relative!important;display:block!important;flex:none;--s:clamp(6.6px,1.95vw,9.5px);--g:2px;--u:calc(var(--s) + var(--g));
+  width:calc(var(--u)*1.5 + var(--s))!important;max-width:none!important;height:calc(var(--u)*8.5 + var(--s));padding:0!important;gap:0!important}
+.stones .st{position:absolute;width:var(--s)!important;height:var(--s)!important;left:calc((var(--c) + var(--ox,0))*var(--u));top:calc((var(--r) + var(--oy,0))*var(--u))}
+.stones .st.l1{--ox:.5;--oy:.5;z-index:2;box-shadow:0 2px 3px rgba(0,0,0,.85),inset 0 -1px 1px rgba(0,0,0,.2)!important}
+.stones .st.l2{--ox:.25;--oy:.25;z-index:3;box-shadow:0 2px 4px rgba(0,0,0,.9),inset 0 -1px 1px rgba(0,0,0,.2)!important}
+.stones .st.new{animation:stIn var(--step,300ms) ease-out both}
+@keyframes stIn{0%,72%{opacity:0;transform:scale(.3)}88%{opacity:1;transform:scale(1.35)}100%{opacity:1;transform:none}}
+.cnt{flex:none}
+/* ---- flying stones ---- */
+.board{position:relative}
+.flylayer{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:visible}
+.flyst{position:absolute;left:0;top:0;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--stone) 55%,#b9a98a);box-shadow:0 8px 10px rgba(0,0,0,.45)}
+@media(prefers-reduced-motion:reduce){.stones .st.new{animation:none}}
 /* ---- features from the Gemini version ---- */
 .appbar{grid-template-columns:auto minmax(0,1fr) auto!important}.abr{gap:6px!important}
 .appbar .ib{width:40px;height:40px}.ttl b{font-size:clamp(18px,5.4vw,24px)!important}
@@ -257,7 +273,7 @@ details{border:1px solid rgba(255,255,255,.08)}
 <h3 id="tT"></h3><p id="tP"></p><div class="thint" id="tHint" hidden></div><div class="tlist" id="tList" hidden></div>
 <div class="tbtns"><button class="b main" id="tNext" hidden></button><button class="b" id="tRetry" hidden></button><button class="b" id="tHintBtn" data-t="hintBtn"></button><button class="b" id="tBest" hidden data-t="bestBtn"></button><button class="b" id="tAll" data-t="allTasks"></button><button class="b" id="tExit" data-t="exit"></button></div></div>
 
-<div class="board" id="board">
+<div class="board" id="board"><div class="flylayer" id="fly" aria-hidden="true"></div>
   <div class="row nums" id="topNums"></div>
   <div class="row" id="top"></div>
   <div class="kzrow">
@@ -320,7 +336,18 @@ const $=id=>document.getElementById(id);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let S,hist=[],busy=false,last=-1,land=-1,timer=null,animTimer=null,moveId=0;
-const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1};
+const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1;const L=document.getElementById('fly');if(L)L.innerHTML=''};
+/* a stone that jumps in an arc between two places on the board */
+function spot(t){const B=$('board').getBoundingClientRect();let el,r;
+  if(typeof t==='number'){el=document.querySelector(`.hole[data-i="${t}"]`);if(!el)return null;r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height*.4-B.top]}
+  el=document.querySelector(`#${t} .slots`)||$(t);r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height/2-B.top]}
+function flyStone(from,to,dur,delay=0){if(reduced||dur<40)return;const a=spot(from),b=spot(to);if(!a||!b)return;
+  const el=document.createElement('i');el.className='flyst';$('fly').appendChild(el);
+  const dx=b[0]-a[0],dy=b[1]-a[1],hgt=22+Math.min(60,Math.hypot(dx,dy)*.25);
+  const an=el.animate([{transform:`translate(${a[0]}px,${a[1]}px) scale(1)`,opacity:1},
+    {transform:`translate(${a[0]+dx/2}px,${a[1]+dy/2-hgt}px) scale(1.4)`,opacity:1,offset:.5},
+    {transform:`translate(${b[0]}px,${b[1]}px) scale(.9)`,opacity:1}],{duration:dur,delay,easing:'cubic-bezier(.35,0,.45,1)',fill:'backwards'});
+  an.onfinish=an.oncancel=()=>el.remove()}
 let mode=store.get('tk-mode','ai'),level=+store.get('tk-level',4),spd=+store.get('tk-spd2',1);
 let lang=store.get('tk-lang',(navigator.language||'').startsWith('ky')||(navigator.language||'').startsWith('ru')?'ky':(navigator.language||'').startsWith('en')?'en':'ky');
 if(!['ai','2p','cc'].includes(mode))mode='ai';
@@ -490,10 +517,14 @@ function holeHTML(i){
   const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
   const aim=aimOn&&aimFrom>=0&&S.b[aimFrom]>0&&landing(S,aimFrom)===i;
   const cls=['hole',canClick?'can':'',hint?'hint':'',aim?'aim':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
-  const dots=own>=0?'':'<span class="st"></span>'.repeat(Math.min(n,30));
+  const dots=own>=0?'':stonesHTML(n,i===land);
   const who=Math.floor(i/9)===0?names()[0]:names()[1];
-  return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}"><span class="stones">${dots}</span><span class="cnt">${own>=0?T().tz:n}</span></button>`;
+  return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}">${dots||'<span class="stones"></span>'}<span class="cnt">${own>=0?T().tz:n}</span></button>`;
 }
+function stonesHTML(n,fresh){let o='';const m=Math.min(n,54);
+  for(let k=0;k<m;k++){const L=Math.floor(k/18),x=k%18;
+    o+=`<span class="st${L?' l'+L:''}${fresh&&k===m-1?' new':''}" style="--c:${x%2};--r:${x>>1}"></span>`}
+  return `<span class="stones">${o}</span>`}
 function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
   o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}return o}
 function stTxt(p){const t=T();
@@ -535,7 +566,8 @@ function doMove(i){
   last=i;busy=true;say(p,mv);
   const done=()=>{S=s;land=-1;busy=false;
     if(ev){const b=$('bub'+p);b.innerHTML=mv+' <b>'+(ev.type==='cap'?t.took(ev.n,you):t.tuzT(ev.h,you))+'</b>';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
-    if(ev)sfx(ev.type==='cap'?'cap':'tuz');
+    if(ev){sfx(ev.type==='cap'?'cap':'tuz');const q=frames[frames.length-1].q,cnt=ev.type==='cap'?ev.n:3;
+      if(SPEEDS[spd][0])for(let j=0;j<Math.min(cnt,12);j++)flyStone(q,'kz'+p,520,j*55)}
     if(tut){tut.done=true;checkTask(i,ev,hist[hist.length-1]);sfx(tut.ok?'ok':'bad');showTut();render();return}
     render();
     if(S.over)return showOver();
@@ -543,8 +575,15 @@ function doMove(i){
   };
   if(reduced||!SPEEDS[spd][0]){done();return}
   const step=SPEEDS[spd][0];let f=0;
-  const id=++moveId;
-  const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){S=frames[f].s;land=frames[f].q;f++;render();sfx('drop');animTimer=setTimeout(tick,step)}else done()};
+  const id=++moveId,n0=hist[hist.length-1].b[i];
+  $('board').style.setProperty('--step',step+'ms');
+  const tick=()=>{if(id!==moveId)return;if(f<frames.length-1){
+      const fr=frames[f],from=f===0?(n0===1?i:-1):frames[f-1].q,to=fr.q;
+      S=fr.s;land=to;render();
+      if(from>=0&&from!==to){flyStone(from,to,step*.78);
+        const own=fr.s.t[0]===to?0:fr.s.t[1]===to?1:-1;if(own>=0)flyStone(to,'kz'+own,step*.6,step*.78)}
+      setTimeout(()=>{if(id===moveId)sfx('drop')},step*.75);
+      f++;animTimer=setTimeout(tick,step)}else done()};
   tick();
 }
 function aiMove(){if(!aiTurn()||busy)return;render();
