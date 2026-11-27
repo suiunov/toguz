@@ -234,6 +234,17 @@ details{border:1px solid rgba(255,255,255,.08)}
 .flyst{position:absolute;left:0;top:0;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%,#fff,var(--stone) 55%,#b9a98a);box-shadow:0 8px 10px rgba(0,0,0,.45)}
 @media(prefers-reduced-motion:reduce){.stones .st.new{animation:none}}
+/* ---- hole style A: stones settle at the bottom, number in a gold badge on top ---- */
+.hole{justify-content:space-between!important;padding:7px 2px 9px!important;
+  background:linear-gradient(180deg,#140a04 0%,#24130a 45%,#3a2312 100%)!important;
+  box-shadow:inset 0 8px 14px rgba(0,0,0,.85),inset 0 -3px 0 rgba(255,220,170,.10),0 1px 0 rgba(255,230,190,.28)!important}
+.hole .cnt{order:-1;background:linear-gradient(#f6cf62,#e1a62b)!important;color:#3b1d05!important;font-weight:800!important;font-size:13px!important;
+  min-width:24px;padding:1px 6px!important;border-radius:999px!important;box-shadow:0 2px 0 rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.5)!important;line-height:1.35}
+.hole.tuz .cnt{background:none!important;box-shadow:none!important;color:var(--gold)!important;font-size:22px!important}
+.hole.tuz.p1 .cnt{color:var(--blue)!important}
+.stones .st{top:calc((var(--r) + .5 + var(--oy,0))*var(--u))!important}
+.stones .st.l1{--ox:.5!important;--oy:-.5!important}
+.stones .st.l2{--ox:.25!important;--oy:-.25!important}
 /* ---- features from the Gemini version ---- */
 .appbar{grid-template-columns:auto minmax(0,1fr) auto!important}.abr{gap:6px!important}
 .appbar .ib{width:40px;height:40px}.ttl b{font-size:clamp(18px,5.4vw,24px)!important}
@@ -339,7 +350,7 @@ let S,hist=[],busy=false,last=-1,land=-1,timer=null,animTimer=null,moveId=0;
 const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1;const L=document.getElementById('fly');if(L)L.innerHTML=''};
 /* a stone that jumps in an arc between two places on the board */
 function spot(t){const B=$('board').getBoundingClientRect();let el,r;
-  if(typeof t==='number'){el=document.querySelector(`.hole[data-i="${t}"]`);if(!el)return null;r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height*.4-B.top]}
+  if(typeof t==='number'){el=document.querySelector(`.hole[data-i="${t}"]`);if(!el)return null;r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height*.72-B.top]}
   el=document.querySelector(`#${t} .slots`)||$(t);r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height/2-B.top]}
 function flyStone(from,to,dur,delay=0){if(reduced||dur<40)return;const a=spot(from),b=spot(to);if(!a||!b)return;
   const el=document.createElement('i');el.className='flyst';$('fly').appendChild(el);
@@ -523,7 +534,7 @@ function holeHTML(i){
 }
 function stonesHTML(n,fresh){let o='';const m=Math.min(n,54);
   for(let k=0;k<m;k++){const L=Math.floor(k/18),x=k%18;
-    o+=`<span class="st${L?' l'+L:''}${fresh&&k===m-1?' new':''}" style="--c:${x%2};--r:${x>>1}"></span>`}
+    o+=`<span class="st${L?' l'+L:''}${fresh&&k===m-1?' new':''}" style="--c:${x%2};--r:${8-(x>>1)}"></span>`}
   return `<span class="stones">${o}</span>`}
 function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
   o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}return o}
