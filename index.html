@@ -306,6 +306,16 @@ details{border:1px solid rgba(255,255,255,.08)}
 .tl button.cur{border-color:var(--gold)}.tl button small{grid-column:1;font-size:13px;color:var(--soft);font-weight:400}
 .tl .ok{grid-row:1/3;grid-column:2;width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:15px}
 .tl .ok.y{background:var(--gold);border-color:var(--gold);color:#3b1d05}
+.txt{width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.28);color:var(--ink);font:500 18px Rubik,system-ui,sans-serif;outline:none}
+.txt:focus{border-color:var(--gold)}
+.txt.code{text-align:center;letter-spacing:.3em;font-size:24px;font-weight:700}
+.card .txt{margin:0 0 14px}.card .b{width:100%}
+.onl{display:flex;flex-direction:column;gap:10px}.onl .b{width:100%}
+.onl .row2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.onl .row2 .b{width:auto;padding:0 18px}
+.bigcode{font:800 52px Rubik,system-ui,sans-serif;letter-spacing:.12em;text-align:center;color:var(--gold);margin:4px 0}
+.onl .msg{text-align:center;color:var(--soft);font-size:15px;min-height:1.2em}.onl .msg.err{color:#ff9d8a}
+.onl .who{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.2);font-size:16px}
+.onl .who button{background:none;border:0;color:var(--gold);font:500 15px Rubik,system-ui,sans-serif;cursor:pointer}
 #board,#board *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 </style>
 </head>
@@ -340,6 +350,9 @@ details{border:1px solid rgba(255,255,255,.08)}
 
 <div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button class="b main" id="again" data-t="playAgain"></button></div></div>
 
+<div class="over" id="nameBox"><div class="card"><h2 data-t="welcome"></h2><p data-t="nameAsk"></p>
+<input class="txt" id="nameIn" maxlength="16" autocomplete="nickname" enterkeyhint="done"><button class="b main" id="nameOk" data-t="start"></button></div></div>
+
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="dhead">
@@ -350,7 +363,7 @@ details{border:1px solid rgba(255,255,255,.08)}
   <div class="view" data-v="main">
     <button class="mi" id="mNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg><span data-t="newGame"></span></button>
     <div class="lbl" data-t="mode"></div>
-    <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="cc"></button></div>
+    <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="online"></button><button data-v="cc"></button></div>
     <div id="levelBox"><div class="lbl" data-t="level"></div>
     <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button><button data-v="99"></button><button data-v="100"></button></div></div>
     <div id="speedBox"><div class="lbl" data-t="speed"></div>
@@ -363,8 +376,11 @@ details{border:1px solid rgba(255,255,255,.08)}
     <button class="mi" data-go="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-t="about"></span></button>
   </div>
   <div class="view" data-v="tasklist" hidden><div class="tl" id="taskListBox"></div></div>
+  <div class="view" data-v="online" hidden><div class="onl" id="onlBox"></div></div>
   <div class="view" data-v="rules" hidden><ol class="rules" id="rulesList"></ol></div>
   <div class="view" data-v="settings" hidden>
+    <div class="lbl" data-t="yourName"></div>
+    <input class="txt" id="nameSet" maxlength="16" autocomplete="nickname" enterkeyhint="done">
     <div class="lbl" data-t="language"></div>
     <div class="seg" id="segLang"><button data-v="ky">Кыргызча</button><button data-v="en">English</button></div>
     <div class="lbl" data-t="sound"></div>
@@ -405,9 +421,14 @@ if(!['ai','2p','cc'].includes(mode))mode='ai';
 /* ---------- texts ---------- */
 const TX={
 ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
-  speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер',100:'Улуу чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',cc:'Компьютерлердин беттешин көрүү'},
+  speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',online:'Онлайн',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер',100:'Улуу чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',online:'Досуң менен интернет аркылуу',cc:'Компьютерлердин беттешин көрүү'},
   menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
   language:'Тил',on:'Күйүк',off:'Өчүк',sound:'Үн',preview:'Жүрүштү алдын ала көрүү',previewSub:'Акыркы коргоол түшө турган үй жашыл жарык менен көрүнөт. Компьютерде чычканды үйгө алып барыңыз, телефондо үйдү басып кармаңыз.',hintBtn:'Кеңеш',allTasks:'Бардык тапшырмалар',tasklist:'Тапшырмалар',lv:['Башталгыч','Орто','Татаал','Чебер'],hintCap:(h,x)=>`Каршылаштын ${h}-үйүн караңыз (азыр ${x} коргоол). Акыркы коргоолу так ошол жерге түшө турган үйүңүздү табыңыз.`,hintTuz:(h,x)=>`Каршылаштын ${h}-үйүндө ${x} коргоол бар — дагы бир коргоол түшсө, 3 болот.`,hintUse:h=>`Туздугуңуз — каршылаштын ${h}-үйү. Ал аркылуу өтүп, анан дагы жуп сан түзгөн жүрүштү издеңиз.`,names:['Биринчи түшүм','Так сокку','Жашыруун олжо','Эң чоң олжо','Алыс сокку','Туздук ачуу','Туздук издөө','Туздук түтүгү','Акыркы сокку','Чебердин эсеби'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
+  welcome:'Кош келиңиз!',nameAsk:'Атыңызды жазыңыз. Башка оюнчулар ушул атты көрөт.',start:'Ойноо',yourName:'Атыңыз',defName:'Оюнчу',
+  create:'Оюн түзүү',join:'Кошулуу',codeIn:'Досуңуздун коду',orJoin:'же досуңуздун оюнуна кошулуңуз',shareTxt:'Бул кодду досуңузга жөнөтүңүз',share:'Бөлүшүү',copied:'Көчүрүлдү',
+  waitFriend:'Досуңуз күтүлүүдө…',connecting:'Туташууда…',cancel:'Жокко чыгаруу',leave:'Оюндан чыгуу',playingWith:n=>`${n} менен ойноп жатасыз`,change:'Өзгөртүү',
+  noRoom:'Мындай код жок же оюн башталып калган.',netErr:'Байланыш жок. Интернетти текшерип, кайра аракет кылыңыз.',notSetup:'Онлайн оюн азырынча даяр эмес.',
+  oppTurn:'Анын кезеги',oppAway:'Байланыш үзүлдү…',oppLeft:n=>`${n} оюндан чыгып кетти`,codeLbl:c=>`код ${c}`,shareMsg:c=>`Мени менен Тогуз коргоол ойно! Код: ${c}`,
   you:'Сиз',computer:'Компьютер',opponent:'Каршылаш',player:n=>`${n}-оюнчу`,comp:n=>`Компьютер ${n}`,
   winner:'Жеңүүчү',draw:'Тең',waiting:'Күтүүдө',paused:'Тыным',thinking:'Ойлонууда…',yourTurn:'Сиздин кезегиңиз',turn:'Кезек',taskSt:'Тапшырма',
   played:(h,y)=>`${h}-үйдөн жүрдү${y?'ңүз':''}.`,took:(n,y)=>`${n} коргоол ${y?'алдыңыз':'алды'}!`,tuzT:(h,y)=>`Туздук ${y?'алдыңыз':'алды'} (${h}-үй)!`,
@@ -435,11 +456,16 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
     'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.',
     'Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Бир оюнда бир гана туздук; каршылаштын 9-үйүнөн жана анын туздугу менен бирдей номердеги үйдөн алууга болбойт.',
     'Казандагы 9 чарчы толсо — 81. <b>82 же андан көп</b> чогулткан оюнчу жеңет. 81–81 — тең. Оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы коргоолдорду алат жана оюн бүтөт.'],
-  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.3.'},
+  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Досуң менен онлайн ойноого интернет керек. Версия 1.4.'},
 en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
-  speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master',100:'Grandmaster'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',cc:'Watch the computers play'},
+  speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',online:'Online',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master',100:'Grandmaster'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',online:'Play a friend over the internet',cc:'Watch the computers play'},
   menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
   language:'Language',on:'On',off:'Off',sound:'Sound',preview:'Landing preview',previewSub:'The hole where your last stone will land glows green. On a computer, hover over a hole; on a phone, press and hold it.',hintBtn:'Hint',allTasks:'All tasks',tasklist:'Tasks',lv:['Beginner','Intermediate','Advanced','Master'],hintCap:(h,x)=>`Look at the opponent\u2019s hole ${h} (${x} stones now). Which of your holes drops its last stone right there?`,hintTuz:(h,x)=>`The opponent\u2019s hole ${h} has ${x} stones — one more makes 3.`,hintUse:h=>`Your tuzdyk is the opponent\u2019s hole ${h}. Find a move that passes through it and still makes an even number.`,names:['First Harvest','Clean Shot','Hidden Prize','Biggest Haul','Long-Range Strike','Open a Tuzdyk','Tuzdyk Hunt','Tuz Pipeline','Final Blow','Master\u2019s Calculation'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
+  welcome:'Welcome!',nameAsk:'Enter your name. Other players will see it.',start:'Play',yourName:'Your name',defName:'Player',
+  create:'Create game',join:'Join',codeIn:'Friend’s code',orJoin:'or join a friend’s game',shareTxt:'Send this code to your friend',share:'Share',copied:'Copied',
+  waitFriend:'Waiting for your friend…',connecting:'Connecting…',cancel:'Cancel',leave:'Leave game',playingWith:n=>`Playing with ${n}`,change:'Change',
+  noRoom:'No game with this code, or it has already started.',netErr:'No connection. Check the internet and try again.',notSetup:'Online play is not set up yet.',
+  oppTurn:'Their turn',oppAway:'Connection lost…',oppLeft:n=>`${n} left the game`,codeLbl:c=>`code ${c}`,shareMsg:c=>`Play Toguz Korgool with me! Code: ${c}`,
   you:'You',computer:'Computer',opponent:'Opponent',player:n=>`Player ${n}`,comp:n=>`Computer ${n}`,
   winner:'Winner',draw:'Draw',waiting:'Waiting',paused:'Paused',thinking:'Thinking…',yourTurn:'Your turn',turn:'Turn',taskSt:'Task',
   played:(h,y)=>`Played hole ${h}.`,took:(n,y)=>`Took ${n}!`,tuzT:(h,y)=>`Tuzdyk on hole ${h}!`,
@@ -467,7 +493,7 @@ en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',
     'If your last stone lands in an opponent’s hole and makes the count <b>even</b>, you take them all into your kazan.',
     'If it makes exactly <b>3</b>, that hole becomes your <b>tuzdyk</b> (gold for you, blue for the opponent): the 3 stones are yours, and every stone that later falls in goes to your kazan. One tuzdyk per player; never the opponent’s 9th hole, and not the same number as the opponent’s tuzdyk.',
     'Nine full squares in the kazan is 81. Collect <b>82 or more</b> to win; 81–81 is a draw. If a player has no stones to move, the other player takes the stones left on their side and the game ends.'],
-  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.3.'}};
+  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Online play with a friend needs internet. Version 1.4.'}};
 const T=()=>TX[lang];
 
 /* ---------- rules engine ---------- */
@@ -583,13 +609,13 @@ const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450],[0,70
 if(!(spd>=0&&spd<=4))spd=1;
 if(![1,4,8,99,100].includes(level))level=4;
 const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
-const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='ai'?[t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
+const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='online'?[myName(),on.oppName||t.opponent]:mode==='ai'?[myName(true)||t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
 const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
 
 function holeHTML(i){
   const n=S.b[i],own=S.t[0]===i?0:S.t[1]===i?1:-1;
   const hint=tut&&!tut.done&&tut.best&&TASKS[tut.i]&&TASKS[tut.i].ans[0]===i;
-  const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
+  const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1)&&!(mode==='online'&&(S.turn!==0||on.gone)));
   const aim=aimOn&&aimFrom>=0&&S.b[aimFrom]>0&&landing(S,aimFrom)===i;
   const cls=['hole',canClick?'can':'',hint?'hint':'',aim?'aim':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
   const inner=own>=0?TZMARK.replace('{t}',T().tuzLbl):stonesHTML(n,i===land,i);
@@ -616,6 +642,7 @@ function stTxt(p){const t=T();
   if(S.over)return S.over.w===p?t.winner:S.over.w<0?t.draw:'';
   if(S.turn!==p)return t.waiting;
   if(mode==='cc')return paused?t.paused:t.thinking;
+  if(mode==='online')return p===0?t.yourTurn:on.away?t.oppAway:t.oppTurn;
   if(mode==='ai')return p===1?t.thinking:t.yourTurn;
   return t.turn;
 }
@@ -630,22 +657,22 @@ function render(){
     $('pn'+p).textContent=nm[p];$('pst'+p).textContent=stTxt(p);
     $('pl'+p).classList.toggle('on',tut?p===0:!S.over&&S.turn===p||(S.over&&S.over.w===p))}
   $('undoBtn').disabled=busy||hist.length===0||!!tut;
-  $('undoBtn').hidden=mode==='cc';$('playTop').hidden=mode!=='cc'||!!tut;
+  $('undoBtn').hidden=mode==='cc'||mode==='online';$('playTop').hidden=mode!=='cc'||!!tut;
   $('playTop').classList.toggle('paused',paused);$('playTop').setAttribute('aria-label',paused?t.play:t.pause);
   const dim=!S.over&&!tut;
   $('top').classList.toggle('idle',dim&&S.turn!==1);$('bot').classList.toggle('idle',dim&&S.turn!==0);
-  $('modeLbl').textContent=tut?t.tasks:t.modes[mode]+(mode==='2p'?'':' · '+t.levels[level]);
+  $('modeLbl').textContent=tut?t.tasks:t.modes[mode]+(mode==='2p'?'':mode==='online'?' · '+t.codeLbl(on.code):' · '+t.levels[level]);
 }
 function say(p,html){for(const q of [0,1]){const b=$('bub'+q);
   if(p==null){b.innerHTML='';b.classList.remove('old');continue}
   if(q===p){b.innerHTML=html;b.classList.remove('old','pop');void b.offsetWidth;b.classList.add('pop')}else b.classList.add('old')}}
-function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,SPEEDS[spd][mode==='cc'?1:2])}
+function schedAI(){clearTimeout(timer);if(aiTurn())timer=setTimeout(aiMove,SPEEDS[spd][mode==='cc'?1:2]);netPump()}
 
 function doMove(i){
   if(busy||S.over)return;
   hist.push(clone(S));
   const frames=[],s=clone(S),p=S.turn,ev=apply(s,i,frames),t=T();
-  const you=(tut||mode==='ai')&&p===0;
+  const you=(tut||mode==='ai'||mode==='online')&&p===0;
   const mv=t.played(i%9+1,you);
   last=i;busy=true;say(p,mv);
   const done=()=>{S=s;land=-1;busy=false;
@@ -678,12 +705,12 @@ function aiMove(){if(!aiTurn()||busy||thinking)return;render();
     doMove(m)})}
 function showOver(){
   const w=S.over.w,nm=names(),t=T();
-  $('ovT').textContent=w<0?t.drawT:mode==='ai'?(w===0?t.youWin:t.compWins):t.wins(nm[w]);
-  $('ovP').textContent=`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
+  $('ovT').textContent=w<0?t.drawT:mode==='ai'||mode==='online'?(w===0?t.youWin:mode==='ai'?t.compWins:t.wins(nm[1])):t.wins(nm[w]);
+  $('ovP').textContent=S.over.left?t.oppLeft(nm[1]):`${nm[0]} ${S.k[0]} – ${S.k[1]} ${nm[1]}`;
   $('over').classList.add('show');
-  sfx(w<0?'cap':(mode==='ai'&&w===1)?'lose':'win');
+  sfx(w<0?'cap':((mode==='ai'||mode==='online')&&w===1)?'lose':'win');
 }
-function newGame(){stopAll();aimFrom=-1;tut=null;$('tut').hidden=true;S=fresh();
+function newGame(){if(mode==='online'){if(S.over)netLeave();openOnline();return}stopAll();aimFrom=-1;tut=null;$('tut').hidden=true;S=fresh();
   hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');render();schedAI()}
 
 /* ---------- tasks: find the best move ---------- */
@@ -691,7 +718,7 @@ const TASK_LV=[0,0,0,1,1,1,2,2,2,3];
 const TASKS=[{"b":[10,4,0,6,7,4,10,13,6,10,5,9,5,6,8,4,5,1],"k":[18,31],"t":[-1,2],"kind":"cap","ans":[4]},{"b":[4,7,10,5,4,0,6,9,10,7,6,8,8,8,7,9,4,8],"k":[7,35],"t":[-1,5],"kind":"cap","ans":[7]},{"b":[4,10,10,10,3,3,0,7,5,7,9,8,8,10,10,6,6,1],"k":[23,22],"t":[-1,6],"kind":"cap","ans":[1]},{"b":[6,7,9,7,9,17,7,13,9,9,7,5,7,9,4,6,8,7],"k":[9,7],"t":[-1,-1],"kind":"max","ans":[3]},{"b":[8,8,7,8,11,6,6,8,8,9,6,10,4,4,3,7,3,8],"k":[26,12],"t":[-1,-1],"kind":"max","ans":[8]},{"b":[12,9,5,6,4,9,6,3,11,5,10,6,11,2,2,13,6,6],"k":[10,26],"t":[-1,-1],"kind":"tuz","ans":[5]},{"b":[10,8,7,6,8,3,8,6,6,2,2,6,10,3,8,2,11,5],"k":[6,45],"t":[-1,-1],"kind":"tuz","ans":[0]},{"b":[6,6,12,8,7,8,11,8,9,3,5,5,0,7,4,4,5,5],"k":[31,18],"t":[12,-1],"kind":"usetuz","ans":[2]},{"b":[1,1,2,3,1,7,1,0,1,1,1,5,2,1,5,1,0,3],"k":[76,50],"t":[-1,-1],"kind":"win","ans":[5]},{"b":[0,0,4,1,1,3,1,3,3,5,2,1,5,3,2,2,0,2],"k":[76,48],"t":[-1,0],"kind":"win2","ans":[7]}];
 let solved=[];try{solved=JSON.parse(store.get('tk-solved','[]'))}catch(e){}
 const solvedN=()=>solved.filter(Boolean).length;
-function startTask(i){stopAll();$('over').classList.remove('show');
+function startTask(i){netLeave();stopAll();$('over').classList.remove('show');
   if(i>=TASKS.length){tut={summary:true,i,done:true};S=fresh();hist=[];last=-1;land=-1;say(null);showTut();render();return}
   const X=TASKS[i];tut={i,done:false,ok:null,gain:0,hint:false};aimFrom=-1;
   S={b:X.b.slice(),k:X.k.slice(),t:X.t.slice(),turn:0,over:null};hist=[];last=-1;land=-1;say(null);showTut();render();
@@ -744,7 +771,7 @@ function closeMenu(){$('drawer').classList.remove('show');$('scrim').classList.r
 function showView(v){view=v;const t=T();
   document.querySelectorAll('.view').forEach(e=>e.hidden=e.dataset.v!==v);
   $('dBack').hidden=v==='main';$('dTitle').textContent=v==='main'?t.menu:t[v];
-  $('taskProg').textContent=`${solvedN()}/${TASKS.length}`;$('resetNote').textContent='';if(v==='tasklist')taskList();}
+  $('taskProg').textContent=`${solvedN()}/${TASKS.length}`;$('resetNote').textContent='';if(v==='tasklist')taskList();if(v==='online')onlineView();}
 function setSeg(id,val){document.querySelectorAll(`#${id} button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(val)))}
 function applyLang(){const t=T();document.documentElement.lang=lang;document.title=t.title;
   document.querySelectorAll('[data-t]').forEach(e=>{const v=t[e.dataset.t];if(typeof v==='string')e.textContent=v});
@@ -755,7 +782,7 @@ function applyLang(){const t=T();document.documentElement.lang=lang;document.tit
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
   setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segSound',sound?1:0);setSeg('segAim',aimOn?1:0);
   $('undoBtn').setAttribute('aria-label',t.undo);
-  $('levelBox').hidden=mode==='2p';
+  $('levelBox').hidden=mode==='2p'||mode==='online';$('nameSet').value=myName(true);
   if($('drawer').classList.contains('show'))showView(view);
   if(tut)showTut();render()}
 $('menuBtn').onclick=openMenu;$('dClose').onclick=closeMenu;$('scrim').onclick=closeMenu;$('dBack').onclick=()=>showView('main');
@@ -763,7 +790,7 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView(b.dataset.go));
 $('mNew').onclick=()=>{closeMenu();newGame()};
 $('mTasks').onclick=()=>showView('tasklist');
-$('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
+$('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v==='online'){showView('online');return}netLeave();mode=b.dataset.v;paused=false;store.set('tk-mode',mode);applyLang();newGame()};
 $('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
 $('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
 $('segSound').onclick=e=>{const b=e.target.closest('button');if(!b)return;sound=b.dataset.v==='1';store.set('tk-sound',sound?'1':'0');applyLang();sfx('ok')};
@@ -777,7 +804,7 @@ let holdT=null,held=false;
 const setAim=i=>{if(aimFrom===i)return;aimFrom=i;const L=aimOn&&i>=0&&S.b[i]>0?landing(S,i):-1;
   document.querySelectorAll('#board .hole').forEach(e=>e.classList.toggle('aim',+e.dataset.i===L))};
 $('board').addEventListener('touchmove',e=>{if(held)e.preventDefault()},{passive:false});
-$('board').addEventListener('click',e=>{if(held){held=false;return}const h=e.target.closest('.hole.can');if(h){aimFrom=-1;doMove(+h.dataset.i)}});
+$('board').addEventListener('click',e=>{if(held){held=false;return}const h=e.target.closest('.hole.can');if(h){aimFrom=-1;playMine(+h.dataset.i)}});
 $('board').addEventListener('pointerover',e=>{if(e.pointerType!=='mouse'||!aimOn)return;const h=e.target.closest('.hole.can');setAim(h?+h.dataset.i:-1)});
 $('board').addEventListener('pointerleave',()=>{if(aimFrom>=0)setAim(-1)});
 $('board').addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'||!aimOn)return;const h=e.target.closest('.hole.can');if(!h)return;
@@ -786,7 +813,7 @@ addEventListener('pointerup',()=>{clearTimeout(holdT);if(held){setAim(-1);setTim
 addEventListener('pointercancel',()=>{clearTimeout(holdT);held=false;setAim(-1)});
 $('board').addEventListener('contextmenu',e=>{if(e.target.closest('.hole'))e.preventDefault()});
 $('again').onclick=newGame;$('newTop').onclick=newGame;
-$('undoBtn').onclick=()=>{if(busy||!hist.length||tut)return;stopAll();
+$('undoBtn').onclick=()=>{if(busy||!hist.length||tut||mode==='online')return;stopAll();
   S=hist.pop();if(mode==='ai')while(S.turn===1&&hist.length)S=hist.pop();
   last=-1;say(null);$('over').classList.remove('show');render();schedAI()};
 $('playTop').onclick=()=>{paused=!paused;render();schedAI()};
@@ -796,7 +823,143 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('mIns
 $('mInstall').onclick=async()=>{if(!deferred)return;closeMenu();deferred.prompt();await deferred.userChoice;deferred=null;$('mInstall').hidden=true};
 addEventListener('appinstalled',()=>{$('mInstall').hidden=true});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+/* ---------- player name + online play ---------- */
+// Firebase project settings (public, safe to keep in the page). Fill in to turn online play on.
+const FIREBASE_CONFIG=null;
+const FB_SDK='https://www.gstatic.com/firebasejs/12.0.0/';
+const myName=(raw)=>{const n=store.get('tk-name','').trim();return raw?n:(n||T().defName)};
+const cleanName=v=>v.replace(/[<>&"]/g,'').replace(/\s+/g,' ').trim().slice(0,16);
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+function askName(then){$('nameIn').value=myName(true);$('nameBox').classList.add('show');setTimeout(()=>$('nameIn').focus(),50);
+  const ok=()=>{const v=cleanName($('nameIn').value);if(!v){$('nameIn').focus();return}store.set('tk-name',v);$('nameBox').classList.remove('show');render();if(then)then()};
+  $('nameOk').onclick=ok;$('nameIn').onkeydown=e=>{if(e.key==='Enter')ok()}}
+$('nameSet').onchange=()=>{const v=cleanName($('nameSet').value);if(v)store.set('tk-name',v);$('nameSet').value=myName(true);render()};
+
+// Small database layer: Firebase Realtime Database, or a local stand-in for testing (?net=local).
+async function dbFirebase(){
+  if(!FIREBASE_CONFIG)throw new Error('notSetup');
+  const [A,U,D]=await Promise.all(['firebase-app.js','firebase-auth.js','firebase-database.js'].map(f=>import(FB_SDK+f)));
+  const app=A.getApps().length?A.getApp():A.initializeApp(FIREBASE_CONFIG);
+  const cred=await U.signInAnonymously(U.getAuth(app));
+  const db=D.getDatabase(app),r=p=>D.ref(db,p);
+  return{uid:cred.user.uid,
+    get:async p=>(await D.get(r(p))).val(),
+    txn:async(p,fn)=>{const x=await D.runTransaction(r(p),fn,{applyLocally:false});return x.committed?x.snapshot.val():null},
+    set:(p,v)=>D.set(r(p),v),
+    remove:p=>D.remove(r(p)),
+    onValue:(p,cb)=>D.onValue(r(p),s=>cb(s.val())),
+    onChild:(p,cb)=>D.onChildAdded(r(p),s=>cb(s.key,s.val())),
+    keepWhileHere:(p,v)=>{const off=D.onValue(r('.info/connected'),s=>{if(s.val()){D.onDisconnect(r(p)).remove();D.set(r(p),v)}});return off}};
+}
+function dbLocal(){ // same API, shared between tabs of one browser through localStorage
+  const K='tk-netdb',ch=new BroadcastChannel('tk-net'),subs=[];
+  const all=()=>{try{return JSON.parse(localStorage.getItem(K)||'{}')}catch(e){return{}}};
+  const at=(o,p)=>p.split('/').reduce((a,k)=>a&&typeof a==='object'?a[k]:undefined,o);
+  const put=(p,v)=>{const o=all(),ks=p.split('/');let a=o;ks.slice(0,-1).forEach(k=>{if(typeof a[k]!=='object'||!a[k])a[k]={};a=a[k]});
+    if(v==null)delete a[ks[ks.length-1]];else a[ks[ks.length-1]]=v;localStorage.setItem(K,JSON.stringify(o));ch.postMessage(1);fire()};
+  const fire=()=>{const o=all();subs.forEach(f=>f(o))};ch.onmessage=fire;
+  const uid='L'+Math.random().toString(36).slice(2,9),mine=[];
+  addEventListener('pagehide',()=>mine.forEach(p=>put(p,null)));
+  return{uid,get:async p=>at(all(),p)??null,
+    txn:async(p,fn)=>{const v=fn(at(all(),p)??null);if(v===undefined)return null;put(p,v);return v},
+    set:async(p,v)=>put(p,v),remove:async p=>put(p,null),
+    onValue:(p,cb)=>{let last;const f=o=>{const v=JSON.stringify(at(o,p)??null);if(v!==last){last=v;cb(JSON.parse(v))}};subs.push(f);f(all());return()=>subs.splice(subs.indexOf(f),1)},
+    onChild:(p,cb)=>{const seen=new Set();const f=o=>{const v=at(o,p)||{};Object.keys(v).sort((a,b)=>a-b).forEach(k=>{if(!seen.has(k)){seen.add(k);cb(k,v[k])}})};subs.push(f);f(all());return()=>subs.splice(subs.indexOf(f),1)},
+    keepWhileHere:(p,v)=>{mine.push(p);put(p,v);return()=>{}}};
+}
+if(new URLSearchParams(location.search).get('net')==='local')window.__tk=()=>({mode,S,on:{stage:on.stage,my:on.my,code:on.code,applied:on.applied}}); // for tests
+let dbP=null;
+const getDb=()=>dbP||(dbP=(new URLSearchParams(location.search).get('net')==='local'?Promise.resolve(dbLocal()):dbFirebase()).catch(e=>{dbP=null;throw e}));
+
+// on: the current online match. my = 0 if I created the game (I move first), 1 if I joined.
+let on={stage:'idle'};
+const ROOM_AGE=6*3600e3;
+async function netCreate(){
+  on={stage:'busy',msg:T().connecting};onlineView();
+  try{const db=await getDb();let code=null;
+    for(let k=0;k<8&&!code;k++){const c=String(1000+Math.floor(Math.random()*9000));
+      const v=await db.txn('rooms/'+c,cur=>cur&&cur.t>Date.now()-ROOM_AGE?undefined:{host:db.uid,hostName:myName(),t:Date.now()});
+      if(v&&v.host===db.uid)code=c}
+    if(!code)throw new Error('full');
+    netWatch(db,code,0);on.stage='wait';onlineView();
+  }catch(e){netFail(e)}}
+async function netJoin(code){
+  code=String(code||'').replace(/\D/g,'').slice(0,4);if(code.length!==4){on={stage:'idle',err:T().noRoom};onlineView();return}
+  on={stage:'busy',msg:T().connecting};onlineView();
+  try{const db=await getDb();
+    const room=await db.get('rooms/'+code);
+    if(!room||room.guest||room.host===db.uid||room.t<Date.now()-ROOM_AGE){on={stage:'idle',err:T().noRoom};onlineView();return}
+    const v=await db.txn('rooms/'+code,cur=>{if(cur===null)return null;if(cur.guest)return;return{...cur,guest:db.uid,guestName:myName()}});
+    if(!v||v.guest!==db.uid){on={stage:'idle',err:T().noRoom};onlineView();return}
+    netWatch(db,code,1);
+  }catch(e){netFail(e)}}
+function netFail(e){on={stage:'idle',err:String(e&&e.message)==='notSetup'?T().notSetup:T().netErr};onlineView()}
+function netWatch(db,code,my){
+  const base='rooms/'+code,offs=[];
+  Object.assign(on,{db,code,my,base,offs,applied:0,queue:{},oppName:'',away:false,gone:false,awayT:null,stage:my?'busy':'wait'});
+  offs.push(db.keepWhileHere(`${base}/here/${my}`,true));
+  offs.push(db.onValue(base,room=>{if(!room||on.base!==base)return;
+    const oppName=my?room.hostName:room.guestName;
+    if(oppName&&on.stage!=='play')netStart(oppName);
+    if(on.stage!=='play')return;
+    const here=room.here&&room.here[1-my],left=room.left&&room.left[1-my];
+    if(left)return netOppGone();
+    if(here)on.seen=true;
+    if(!here&&on.seen&&!on.away){on.away=true;on.awayT=setTimeout(netOppGone,60e3);render()}
+    else if(here&&on.away){on.away=false;clearTimeout(on.awayT);render()}}));
+  offs.push(db.onChild(base+'/moves',(k,v)=>{if(on.base!==base)return;on.queue[+k]=+v;netPump()}));
+}
+function netStart(oppName){
+  on.oppName=cleanName(String(oppName))||T().opponent;on.stage='play';
+  stopAll();aimFrom=-1;tut=null;$('tut').hidden=true;mode='online';paused=false;
+  S=fresh();S.turn=on.my; // the creator always moves first; the board always shows my side at the bottom
+  hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');
+  closeMenu();applyLang();sfx('ok');netPump()}
+const absHole=i=>(i+9*on.my)%18; // my view <-> shared board (turning the board around is the same both ways)
+function playMine(i){
+  if(mode!=='online')return doMove(i);
+  if(busy||S.over||S.turn!==0||on.gone||on.stage!=='play')return;
+  on.db.set(`${on.base}/moves/${on.applied}`,absHole(i)).catch(()=>{});
+  on.applied++;doMove(i)}
+function netPump(){
+  if(mode!=='online'||on.stage!=='play'||busy||S.over)return;
+  const a=on.queue[on.applied];if(a==null)return;
+  const i=absHole(a);
+  if(S.turn!==1||!legal(S).includes(i))return; // own move echoed back, or out of step: ignore
+  on.applied++;doMove(i)}
+function netOppGone(){
+  if(mode!=='online'||on.gone)return;on.gone=true;clearTimeout(on.awayT);
+  if(!S.over){stopAll();S.over={w:0,left:true};render();showOver()}}
+function netLeave(){
+  if(!on.db){on={stage:'idle'};if(mode==='online')mode=store.get('tk-mode','ai');return}
+  const {db,base,my,offs}=on;clearTimeout(on.awayT);
+  offs.forEach(f=>{try{f()}catch(e){}});
+  db.set(`${base}/left/${my}`,true).catch(()=>{});db.remove(`${base}/here/${my}`).catch(()=>{});
+  on={stage:'idle'};
+  if(mode==='online'){mode=store.get('tk-mode','ai');stopAll();S=fresh();hist=[];last=-1;land=-1;say(null);$('over').classList.remove('show');applyLang();schedAI()}}
+function openOnline(){openMenu();showView('online')}
+function onlineView(){const t=T(),box=$('onlBox');if(!box)return;
+  const who=`<div class="who"><span>${esc(myName())}</span><button id="oName">${t.change}</button></div>`;
+  if(on.stage==='play')box.innerHTML=`<div class="msg">${esc(t.playingWith(on.oppName))} · ${t.codeLbl(on.code)}</div><button class="b" id="oLeave">${t.leave}</button>`;
+  else if(on.stage==='wait')box.innerHTML=`<div class="msg">${t.shareTxt}</div><div class="bigcode">${on.code}</div><button class="b main" id="oShare">${t.share}</button><div class="msg" id="oNote">${t.waitFriend}</div><button class="b" id="oLeave">${t.cancel}</button>`;
+  else if(on.stage==='busy')box.innerHTML=`<div class="msg">${on.msg||t.connecting}</div>`;
+  else box.innerHTML=`${who}<button class="b main" id="oCreate">${t.create}</button><div class="msg">${t.orJoin}</div>
+    <div class="row2"><input class="txt code" id="oCode" inputmode="numeric" maxlength="4" placeholder="····" aria-label="${t.codeIn}"><button class="b" id="oJoin">${t.join}</button></div>
+    <div class="msg err">${on.err?esc(on.err):''}</div>`;
+  const b=id=>$(id);
+  if(b('oName'))b('oName').onclick=()=>{closeMenu();askName(openOnline)};
+  if(b('oCreate'))b('oCreate').onclick=netCreate;
+  if(b('oJoin'))b('oJoin').onclick=()=>netJoin($('oCode').value);
+  if(b('oCode'))b('oCode').onkeydown=e=>{if(e.key==='Enter')netJoin(e.target.value)};
+  if(b('oLeave'))b('oLeave').onclick=()=>{netLeave();onlineView();if(mode!=='online')render()};
+  if(b('oShare'))b('oShare').onclick=async()=>{const text=t.shareMsg(on.code),url='https://suiunov.github.io/toguz/?room='+on.code;
+    try{if(navigator.share){await navigator.share({text,url});return}}catch(e){return}
+    try{await navigator.clipboard.writeText(text+' '+url);$('oNote').textContent=t.copied}catch(e){}};
+}
 S=fresh();applyLang();newGame();sizeBoard();
+{const room=new URLSearchParams(location.search).get('room');
+ const go=()=>{if(room){openOnline();netJoin(room)}};
+ if(!myName(true))askName(go);else go()}
 }
 </script>
 </body>
