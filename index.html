@@ -245,6 +245,21 @@ details{border:1px solid rgba(255,255,255,.08)}
 .stones .st{top:calc((var(--r) + .5 + var(--oy,0))*var(--u))!important}
 .stones .st.l1{--ox:.5!important;--oy:-.5!important}
 .stones .st.l2{--ox:.25!important;--oy:-.25!important}
+/* ---- real-looking holes: stone size follows the hole width, 2 stones fill a row, 9 rows fill the hole ---- */
+.board{--hw:36px;--s:calc((var(--hw) - 7px)/2);--p:calc(var(--s)*.84)}
+.hole{height:calc(var(--s)*7.72 + 34px + var(--hw)*.14)!important;padding:6px 3px 0!important;justify-content:flex-start!important;gap:4px}
+.hole .stones{--s:calc((var(--hw) - 7px)/2)!important;--p:calc(var(--s)*.84)!important;position:relative!important;width:calc(var(--s)*2 + 1px)!important;height:calc(var(--s)*7.72)!important;margin-top:auto;margin-bottom:calc(var(--hw)*.14)}
+.stones .st{width:calc(var(--s)*var(--z,1))!important;height:calc(var(--s)*var(--z,1))!important;left:calc(var(--x)*(var(--s) + 1px))!important;
+  bottom:calc(var(--y)*var(--p))!important;top:auto!important;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#ffffff 0,#f4ebd9 42%,#cdbd9d 78%,#a8977a 100%)!important;
+  box-shadow:0 1.5px 2px rgba(0,0,0,.65),inset -1px -1.5px 2px rgba(60,40,10,.22),inset 1px 1px 1px rgba(255,255,255,.7)!important}
+.stones .st.v1{background:radial-gradient(circle at 34% 30%,#fffaf0 0,#efe1c5 42%,#c8b38c 78%,#a08a65 100%)!important}
+.stones .st.v2{background:radial-gradient(circle at 34% 30%,#ffffff 0,#ebe6dc 42%,#c3bcae 78%,#9c9485 100%)!important}
+.stones .st.v3{background:radial-gradient(circle at 34% 30%,#fff7ea 0,#f1dfc4 42%,#cfb38e 78%,#a88a66 100%)!important}
+.stones .st.l1,.stones .st.l3{box-shadow:0 2.5px 3px rgba(0,0,0,.75),inset -1px -1.5px 2px rgba(60,40,10,.22),inset 1px 1px 1px rgba(255,255,255,.7)!important;z-index:2}
+.stones .st.l2{z-index:3}.stones .st.l3{z-index:4}
+.flyst{width:var(--s)!important;height:var(--s)!important;margin:calc(var(--s)/-2) 0 0 calc(var(--s)/-2)!important;
+  background:radial-gradient(circle at 34% 30%,#ffffff 0,#f4ebd9 42%,#cdbd9d 78%,#a8977a 100%)!important}
 /* ---- features from the Gemini version ---- */
 .appbar{grid-template-columns:auto minmax(0,1fr) auto!important}.abr{gap:6px!important}
 .appbar .ib{width:40px;height:40px}.ttl b{font-size:clamp(18px,5.4vw,24px)!important}
@@ -350,7 +365,7 @@ let S,hist=[],busy=false,last=-1,land=-1,timer=null,animTimer=null,moveId=0;
 const stopAll=()=>{clearTimeout(timer);clearTimeout(animTimer);moveId++;busy=false;land=-1;const L=document.getElementById('fly');if(L)L.innerHTML=''};
 /* a stone that jumps in an arc between two places on the board */
 function spot(t){const B=$('board').getBoundingClientRect();let el,r;
-  if(typeof t==='number'){el=document.querySelector(`.hole[data-i="${t}"]`);if(!el)return null;r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height*.72-B.top]}
+  if(typeof t==='number'){el=document.querySelector(`.hole[data-i="${t}"]`);if(!el)return null;r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height*.78-B.top]}
   el=document.querySelector(`#${t} .slots`)||$(t);r=el.getBoundingClientRect();return [r.left+r.width/2-B.left,r.top+r.height/2-B.top]}
 function flyStone(from,to,dur,delay=0){if(reduced||dur<40)return;const a=spot(from),b=spot(to);if(!a||!b)return;
   const el=document.createElement('i');el.className='flyst';$('fly').appendChild(el);
@@ -553,13 +568,20 @@ function holeHTML(i){
   const canClick=tut?(!busy&&!tut.done&&i<9&&n>0):(!busy&&!S.over&&n>0&&Math.floor(i/9)===S.turn&&mode!=='cc'&&!(mode==='ai'&&S.turn===1));
   const aim=aimOn&&aimFrom>=0&&S.b[aimFrom]>0&&landing(S,aimFrom)===i;
   const cls=['hole',canClick?'can':'',hint?'hint':'',aim?'aim':'',i===last?'last':'',i===land?'land':'',own>=0?'tuz p'+own:''].join(' ');
-  const dots=own>=0?'':stonesHTML(n,i===land);
+  const dots=own>=0?'':stonesHTML(n,i===land,i);
   const who=Math.floor(i/9)===0?names()[0]:names()[1];
   return `<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}">${dots||'<span class="stones"></span>'}<span class="cnt">${own>=0?T().tz:n}</span></button>`;
 }
-function stonesHTML(n,fresh){let o='';const m=Math.min(n,54);
-  for(let k=0;k<m;k++){const L=Math.floor(k/18),x=k%18;
-    o+=`<span class="st${L?' l'+L:''}${fresh&&k===m-1?' new':''}" style="--c:${x%2};--r:${8-(x>>1)}"></span>`}
+const jit=(i,k,j)=>{let x=Math.sin(i*127.1+k*311.7+j*74.7)*43758.5453;return x-Math.floor(x)};
+function stonesHTML(n,fresh,hi=0){let o='';const m=Math.min(n,54);
+  for(let k=0;k<m;k++){let L,x,y;
+    if(k<18){L=0;x=k%2;y=k>>1}
+    else if(k<27){L=1;x=.5;y=(k-18)+.5}
+    else if(k<45){L=2;const q=k-27;x=q%2+.06;y=(q>>1)+.28}
+    else{L=3;x=.5;y=(k-45)+.78}
+    if(y>8.35)y=8.35-(y-8.35)*.4;
+    x+=(jit(hi,k,1)-.5)*.1;y+=(jit(hi,k,2)-.5)*.1;const z=(.93+jit(hi,k,3)*.1).toFixed(3),v=Math.floor(jit(hi,k,4)*4);
+    o+=`<span class="st${L?' l'+L:''}${v?' v'+v:''}${fresh&&k===m-1?' new':''}" style="--x:${x.toFixed(3)};--y:${y.toFixed(3)};--z:${z}"></span>`}
   return `<span class="stones">${o}</span>`}
 function slotsHTML(n){let o='';for(let g=0;g<9;g++){const f=Math.max(0,Math.min(9,n-9*g));
   o+=`<span class="slot${f===9?' full':''}">${'<i class="f"></i>'.repeat(f)}${'<i></i>'.repeat(9-f)}</span>`}return o}
@@ -724,6 +746,8 @@ $('segAim').onclick=e=>{const b=e.target.closest('button');if(!b)return;aimOn=b.
 $('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone;if(tut)showTut()};
 
 /* ---------- controls ---------- */
+function sizeBoard(){const hl=document.querySelector('#bot .hole');if(hl){const w=hl.getBoundingClientRect().width;if(w>0)$('board').style.setProperty('--hw',w.toFixed(2)+'px')}}
+try{new ResizeObserver(sizeBoard).observe($('board'))}catch(e){addEventListener('resize',sizeBoard)}
 let holdT=null,held=false;
 const setAim=i=>{if(aimFrom!==i){aimFrom=i;render()}};
 $('board').addEventListener('click',e=>{if(held){held=false;return}const h=e.target.closest('.hole.can');if(h){aimFrom=-1;doMove(+h.dataset.i)}});
@@ -745,7 +769,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('mIns
 $('mInstall').onclick=async()=>{if(!deferred)return;closeMenu();deferred.prompt();await deferred.userChoice;deferred=null;$('mInstall').hidden=true};
 addEventListener('appinstalled',()=>{$('mInstall').hidden=true});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-S=fresh();applyLang();newGame();
+S=fresh();applyLang();newGame();sizeBoard();
 }
 </script>
 </body>
