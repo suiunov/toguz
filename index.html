@@ -251,7 +251,7 @@ details{border:1px solid rgba(255,255,255,.08)}
 #sndTop .x{display:none}#sndTop.off .x{display:inline}#sndTop.off .w{display:none}#sndTop.off{color:var(--soft)}
 .seg.col button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:54px;line-height:1.15}
 .seg.col button small{font-size:12px;font-weight:400;opacity:.8}
-#segLevel button{font-size:14px;padding:0 4px}#segSpeed button{font-size:13px!important;line-height:1.1}
+#segLevel{grid-auto-flow:row!important;grid-template-columns:repeat(6,minmax(0,1fr))}#segLevel button{font-size:14px;padding:0 4px;grid-column:span 2}#segLevel button:nth-child(n+4){grid-column:span 3}#segSpeed button{font-size:13px!important;line-height:1.1}
 .note{font-size:13px;color:var(--soft);margin:6px 4px 0;line-height:1.4}
 .hole.aim{box-shadow:inset 0 7px 12px rgba(0,0,0,.85),0 0 0 3px #62e08d,0 0 16px rgba(98,224,141,.6)!important}
 .thead{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -313,7 +313,7 @@ details{border:1px solid rgba(255,255,255,.08)}
     <div class="lbl" data-t="mode"></div>
     <div class="seg col" id="segMode"><button data-v="ai"></button><button data-v="2p"></button><button data-v="cc"></button></div>
     <div id="levelBox"><div class="lbl" data-t="level"></div>
-    <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button><button data-v="99"></button></div></div>
+    <div class="seg" id="segLevel"><button data-v="1"></button><button data-v="4"></button><button data-v="8"></button><button data-v="99"></button><button data-v="100"></button></div></div>
     <div id="speedBox"><div class="lbl" data-t="speed"></div>
     <div class="seg" id="segSpeed"><button data-v="0"></button><button data-v="1"></button><button data-v="2"></button><button data-v="3"></button><button data-v="4"></button></div></div>
     <div class="sep"></div>
@@ -366,7 +366,7 @@ if(!['ai','2p','cc'].includes(mode))mode='ai';
 /* ---------- texts ---------- */
 const TX={
 ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
-  speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',cc:'Компьютерлердин беттешин көрүү'},
+  speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер',100:'Улуу чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',cc:'Компьютерлердин беттешин көрүү'},
   menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
   language:'Тил',on:'Күйүк',off:'Өчүк',sound:'Үн',preview:'Жүрүштү алдын ала көрүү',previewSub:'Акыркы коргоол түшө турган үй жашыл жарык менен көрүнөт. Компьютерде чычканды үйгө алып барыңыз, телефондо үйдү басып кармаңыз.',hintBtn:'Кеңеш',allTasks:'Бардык тапшырмалар',tasklist:'Тапшырмалар',lv:['Башталгыч','Орто','Татаал','Чебер'],hintCap:(h,x)=>`Каршылаштын ${h}-үйүн караңыз (азыр ${x} коргоол). Акыркы коргоолу так ошол жерге түшө турган үйүңүздү табыңыз.`,hintTuz:(h,x)=>`Каршылаштын ${h}-үйүндө ${x} коргоол бар — дагы бир коргоол түшсө, 3 болот.`,hintUse:h=>`Туздугуңуз — каршылаштын ${h}-үйү. Ал аркылуу өтүп, анан дагы жуп сан түзгөн жүрүштү издеңиз.`,names:['Биринчи түшүм','Так сокку','Жашыруун олжо','Эң чоң олжо','Алыс сокку','Туздук ачуу','Туздук издөө','Туздук түтүгү','Акыркы сокку','Чебердин эсеби'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
   you:'Сиз',computer:'Компьютер',opponent:'Каршылаш',player:n=>`${n}-оюнчу`,comp:n=>`Компьютер ${n}`,
@@ -396,9 +396,9 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
     'Акыркы коргоол каршылаштын үйүнө түшүп, андагы коргоолдордун саны <b>жуп</b> болуп калса, баарын өз казаныңызга аласыз.',
     'Эгер саны так <b>3</b> болуп калса, ал үй сиздин <b>туздугуңуз</b> болот (сиздики алтын, каршылаштыкы көк). 3 коргоол сизге өтөт, андан кийин ал үйгө түшкөн ар бир коргоол сиздики. Бир оюнда бир гана туздук; каршылаштын 9-үйүнөн жана анын туздугу менен бирдей номердеги үйдөн алууга болбойт.',
     'Казандагы 9 чарчы толсо — 81. <b>82 же андан көп</b> чогулткан оюнчу жеңет. 81–81 — тең. Оюнчунун жүрүш жасаганга коргоолу калбаса, экинчи оюнчу өз тарабындагы коргоолдорду алат жана оюн бүтөт.'],
-  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.2.'},
+  aboutT:'Тогуз коргоол — кыргыздын байыркы акыл оюну. Бул тиркеме интернетсиз иштейт: компьютерге каршы, эки киши же компьютер өзү ойногон режимдер, 10 тапшырма бар. Версия 1.3.'},
 en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
-  speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',cc:'Watch the computers play'},
+  speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master',100:'Grandmaster'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',cc:'Watch the computers play'},
   menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
   language:'Language',on:'On',off:'Off',sound:'Sound',preview:'Landing preview',previewSub:'The hole where your last stone will land glows green. On a computer, hover over a hole; on a phone, press and hold it.',hintBtn:'Hint',allTasks:'All tasks',tasklist:'Tasks',lv:['Beginner','Intermediate','Advanced','Master'],hintCap:(h,x)=>`Look at the opponent\u2019s hole ${h} (${x} stones now). Which of your holes drops its last stone right there?`,hintTuz:(h,x)=>`The opponent\u2019s hole ${h} has ${x} stones — one more makes 3.`,hintUse:h=>`Your tuzdyk is the opponent\u2019s hole ${h}. Find a move that passes through it and still makes an even number.`,names:['First Harvest','Clean Shot','Hidden Prize','Biggest Haul','Long-Range Strike','Open a Tuzdyk','Tuzdyk Hunt','Tuz Pipeline','Final Blow','Master\u2019s Calculation'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
   you:'You',computer:'Computer',opponent:'Opponent',player:n=>`Player ${n}`,comp:n=>`Computer ${n}`,
@@ -428,7 +428,7 @@ en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',
     'If your last stone lands in an opponent’s hole and makes the count <b>even</b>, you take them all into your kazan.',
     'If it makes exactly <b>3</b>, that hole becomes your <b>tuzdyk</b> (gold for you, blue for the opponent): the 3 stones are yours, and every stone that later falls in goes to your kazan. One tuzdyk per player; never the opponent’s 9th hole, and not the same number as the opponent’s tuzdyk.',
     'Nine full squares in the kazan is 81. Collect <b>82 or more</b> to win; 81–81 is a draw. If a player has no stones to move, the other player takes the stones left on their side and the game ends.'],
-  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.2.'}};
+  aboutT:'Toguz Korgool is a traditional Kyrgyz strategy board game. This app works offline, with modes against the computer, for two people, or computer against computer, plus 10 tasks. Version 1.3.'}};
 const T=()=>TX[lang];
 
 /* ---------- rules engine ---------- */
@@ -456,43 +456,68 @@ function apply(s,i,frames){
   snap(pos);
   return ev;
 }
-/* computer: alpha-beta minimax */
-function evalS(s,me){return s.k[me]-s.k[1-me]+(s.t[me]>=0?8:0)-(s.t[1-me]>=0?8:0)}
-function search(s,d,a,bt,me){
-  if(s.over){const w=s.over.w;return w===me?1e5+d:w<0?0:-1e5-d}
-  if(d===0)return evalS(s,me);
-  const ms=legal(s),max=s.turn===me;let v=max?-1e9:1e9;
-  for(const m of ms){const c=clone(s);apply(c,m);const x=search(c,d-1,a,bt,me);
-    if(max){if(x>v)v=x;if(v>a)a=v}else{if(x<v)v=x;if(v<bt)bt=v}if(a>=bt)break}
-  return v;
-}
-function bestMove(s,d){
-  const me=s.turn,ms=legal(s);
-  if(d===1&&Math.random()<.35)return ms[Math.floor(Math.random()*ms.length)];
-  let bm=ms[0],bv=-1e9;
-  for(const m of ms){const c=clone(s);apply(c,m);const v=search(c,d-1,-1e9,1e9,me);
-    if(v>bv||(v===bv&&Math.random()<.3)){bv=v;bm=m}}
-  return bm;
-}
-
-/* master: deepens the search until the time is up, best moves first */
-function masterMove(s,budget=1500){
-  const me=s.turn,t0=Date.now(),end=t0+budget;let nodes=0;
-  const STOP={};
-  function sr(x,d,a,bt){if((++nodes&1023)===0&&Date.now()>end)throw STOP;
-    if(x.over){const w=x.over.w;return w===me?1e5+d:w<0?0:-1e5-d}
-    if(d===0)return evalS(x,me);
-    const ms=legal(x),max=x.turn===me;let v=max?-1e9:1e9;
-    for(const m of ms){const c=clone(x);apply(c,m);const y=sr(c,d-1,a,bt);
-      if(max){if(y>v)v=y;if(v>a)a=v}else{if(y<v)v=y;if(v<bt)bt=v}if(a>=bt)break}
-    return v}
-  let order=legal(s),best=order[0];
-  for(let d=2;d<=16;d++){const sc=[];let a=-1e9,bm=order[0];
-    try{for(const m of order){const c=clone(s);apply(c,m);const v=sr(c,d-1,a,1e9);sc.push([m,v]);if(v>a){a=v;bm=m}}}catch(e){if(e===STOP)break;throw e}
-    best=bm;order=sc.sort((x,y)=>y[1]-x[1]).map(x=>x[0]);
-    if(a>=1e5||Date.now()-t0>budget*.45)break}
+/* computer: weights trained by self-play (thousands of games), search with memory of seen positions */
+const AIW=[1,22.5322,0.1131,1.1662,0.8574,0.3164];
+function threat(s,X){let best=0;const o=X*9;
+  for(let i=o;i<o+9;i++){const n=s.b[i];if(!n)continue;
+    const land=n===1?(i+1)%18:(i+n-1)%18;if((land>=9?1:0)===X||s.t[0]===land||s.t[1]===land)continue;
+    const c=s.b[land]+1+Math.floor((n-1)/18);
+    if(c%2===0){if(c>best)best=c}
+    else if(c===3&&s.t[X]<0&&land%9!==8&&!(s.t[1-X]>=0&&s.t[1-X]%9===land%9)){if(6>best)best=6}}
   return best}
-const pick=s=>level===99?masterMove(s):bestMove(s,level);
+function evalNew(s,me,W){const op=1-me,b=s.b;let bm=0,bo=0,mm=0,mo=0;
+  for(let i=0;i<9;i++){const x=b[me*9+i],y=b[op*9+i];bm+=x;bo+=y;if(x)mm++;if(y)mo++}
+  const left=(bm+bo)/162,tz=((s.t[me]>=0)-(s.t[op]>=0))*left;
+  const mover=s.turn,tMove=threat(s,mover),tWait=threat(s,1-mover),sg=mover===me?1:-1;
+  let v=W[0]*(s.k[me]-s.k[op])+W[1]*tz+W[2]*(bm-bo)+W[3]*(mm-mo)+sg*(W[4]*tMove-W[5]*tWait);
+  if(W.length>6){let hm=0,ho=0;for(let i=0;i<9;i++){if(b[me*9+i]>hm)hm=b[me*9+i];if(b[op*9+i]>ho)ho=b[op*9+i]}
+    v+=sg*(W[6]*threatSum(s,mover)-W[7]*threatSum(s,1-mover))+W[8]*(hm-ho)}
+  return v}
+
+function engineSearch(s,opts){
+  const me=s.turn,W=opts.W,ev=W?(x=>evalNew(x,me,W)):(x=>evalOld(x,me));
+  const end=opts.time?Date.now()+opts.time:Infinity,STOP={};let nodes=0;
+  const TT=opts.tt?new Map():null;
+  const key=x=>x.b.join(',')+'|'+x.k[0]+'|'+x.t[0]+'|'+x.t[1]+'|'+x.turn;
+  // order: captures first by immediate gain, then TT move
+  function ordered(x,ttm){const ms=legal(x);if(ms.length<2)return ms;
+    const sc=ms.map(m=>{const n=x.b[m],land=n===1?(m+1)%18:(m+n-1)%18;let v=0;
+      if((land>=9?1:0)!==x.turn&&x.t[0]!==land&&x.t[1]!==land){const c=x.b[land]+1;if(c%2===0)v=c;else if(c===3)v=4}
+      if(m===ttm)v+=1000;return [m,v]});
+    sc.sort((a,b)=>b[1]-a[1]);return sc.map(z=>z[0])}
+  function sr(x,d,a,bt){if(opts.time&&(++nodes&1023)===0&&Date.now()>end)throw STOP;
+    if(x.over){const w=x.over.w;return w===me?1e5+d:w<0?0:-1e5-d}
+    if(d===0)return ev(x);
+    let k=null,ttm=-1;
+    if(TT){k=key(x);const e=TT.get(k);if(e){if(e.d>=d){if(e.f===0)return e.v;if(e.f===1&&e.v>=bt)return e.v;if(e.f===2&&e.v<=a)return e.v}ttm=e.m}}
+    const a0=a,b0=bt,max=x.turn===me;let v=max?-1e9:1e9,bm=-1;
+    for(const m of ordered(x,ttm)){const c=clone(x);apply(c,m);const y=sr(c,d-1,a,bt);
+      if(max){if(y>v){v=y;bm=m}if(v>a)a=v}else{if(y<v){v=y;bm=m}if(v<bt)bt=v}if(a>=bt)break}
+    if(TT){const f=v<=a0?2:v>=b0?1:0;TT.set(k,{d,v,f,m:bm});if(TT.size>400000)TT.clear()}
+    return v}
+  const root=legal(s);let best=root[0];if(root.length===1)return best;
+  const maxD=opts.depth||40;let order=ordered(s,-1);
+  for(let d=opts.time?2:maxD;d<=maxD;d++){const sc=[];let a=-1e9,bm=order[0];
+    try{for(const m of order){const c=clone(s);apply(c,m);const v=sr(c,d-1,a,1e9);sc.push([m,v]);if(v>a){a=v;bm=m}}}
+    catch(e){if(e===STOP)break;throw e}
+    best=bm;order=sc.sort((x,y)=>y[1]-x[1]).map(z=>z[0]);
+    if(!opts.time)break;if(a>=1e5||Date.now()>end-opts.time*.55)break}
+  return best}
+
+/* levels: Easy, Medium, Hard, Master, Grandmaster */
+const LEVEL={1:{depth:2,rand:.3},4:{depth:4},8:{time:600},99:{time:1500},100:{time:3500}};
+/* the thinking runs in a background worker so the screen stays smooth */
+let aiWorker=null,aiReq=0;const aiWait={};
+try{const src=['const clone='+clone.toString(),legal,drop,apply,threat,evalNew,engineSearch].map(f=>typeof f==='string'?f:f.toString()).join('\n')+
+  '\nonmessage=e=>{const d=e.data;postMessage({id:d.id,m:engineSearch(d.s,d.o)})};';
+  aiWorker=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+  aiWorker.onmessage=e=>{const f=aiWait[e.data.id];delete aiWait[e.data.id];if(f)f(e.data.m)};
+  aiWorker.onerror=()=>{aiWorker=null};}catch(e){aiWorker=null}
+function think(s){const L=LEVEL[level]||LEVEL[4],ms=legal(s);
+  if(L.rand&&Math.random()<L.rand)return Promise.resolve(ms[Math.floor(Math.random()*ms.length)]);
+  const o={depth:L.depth,time:L.time,W:AIW,tt:true};
+  if(!aiWorker)return Promise.resolve(engineSearch(clone(s),o));
+  return new Promise(res=>{const id=++aiReq;aiWait[id]=res;aiWorker.postMessage({id,s:clone(s),o})})}
 
 /* ---------- sound (made in the browser, no files) ---------- */
 let sound=store.get('tk-sound','1')==='1',AC=null;
@@ -517,7 +542,7 @@ const landing=(s,i)=>{const n=s.b[i];return n===1?(i+1)%18:(i+n-1)%18};
 /* one speed for every mode: [ms per stone, pause between turns (computer vs computer), pause before the computer answers you] */
 const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450],[0,700,400]];
 if(!(spd>=0&&spd<=4))spd=1;
-if(![1,4,8,99].includes(level))level=4;
+if(![1,4,8,99,100].includes(level))level=4;
 const fresh=()=>({b:Array(18).fill(9),k:[0,0],t:[-1,-1],turn:0,over:null});
 const names=()=>{const t=T();return tut?[t.you,t.opponent]:mode==='ai'?[t.you,t.computer]:mode==='cc'?[t.comp(1),t.comp(2)]:[t.player(1),t.player(2)]};
 const aiTurn=()=>!S.over&&!tut&&((mode==='ai'&&S.turn===1)||(mode==='cc'&&!paused));
@@ -597,8 +622,12 @@ function doMove(i){
       f++;animTimer=setTimeout(tick,step)}else done()};
   tick();
 }
-function aiMove(){if(!aiTurn()||busy)return;render();
-  timer=setTimeout(()=>{if(aiTurn()&&!busy)doMove(pick(S))},30)}
+let thinking=false;
+function aiMove(){if(!aiTurn()||busy||thinking)return;render();
+  const id=moveId,snap=clone(S);thinking=true;
+  think(snap).then(m=>{thinking=false;
+    if(id!==moveId||!aiTurn()||busy||S.turn!==snap.turn||S.b.join()!==snap.b.join())return schedAI();
+    doMove(m)})}
 function showOver(){
   const w=S.over.w,nm=names(),t=T();
   $('ovT').textContent=w<0?t.drawT:mode==='ai'?(w===0?t.youWin:t.compWins):t.wins(nm[w]);
