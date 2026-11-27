@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Тогуз коргоол</string>
+    <string name="title_activity_main">Тогуз коргоол</string>
+    <string name="package_name">kg.toguz.web</string>
+    <string name="custom_url_scheme">kg.toguz.web</string>
+</resources>

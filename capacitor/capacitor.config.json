@@ -1,0 +1,13 @@
+{
+  "appId": "kg.toguz.web",
+  "appName": "Тогуз коргоол",
+  "webDir": "www",
+  "backgroundColor": "#8c1c24",
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false
+  }
+}
