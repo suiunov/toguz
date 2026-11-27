@@ -324,9 +324,12 @@ class _Kazan extends StatelessWidget {
         border: Border.all(color: on ? C.gold : Colors.transparent, width: 2),
         boxShadow: on ? const [BoxShadow(color: Color(0x59F4C247), blurRadius: 16)] : const [],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: p == 1 ? [kc, const SizedBox(width: 10), squares] : [squares, const SizedBox(width: 10), kc],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: p == 1 ? [kc, const SizedBox(width: 10), squares] : [squares, const SizedBox(width: 10), kc],
+        ),
       ),
     );
   }

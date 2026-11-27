@@ -260,8 +260,8 @@ class _GameScreenState extends State<GameScreen> {
       );
     }
 
-    return SizedBox(
-      height: 74,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 74),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -299,9 +299,13 @@ class _GameScreenState extends State<GameScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: C.ink)),
-            Text(c.status(p),
-                maxLines: 1,
-                style: TextStyle(fontSize: 13, color: on ? C.gold : C.soft, fontWeight: on ? FontWeight.w500 : FontWeight.w400)),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: right ? Alignment.centerRight : Alignment.centerLeft,
+              child: Text(c.status(p),
+                  maxLines: 1,
+                  style: TextStyle(fontSize: 13, color: on ? C.gold : C.soft, fontWeight: on ? FontWeight.w500 : FontWeight.w400)),
+            ),
           ],
         ),
       );
