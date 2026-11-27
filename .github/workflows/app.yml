@@ -168,3 +168,37 @@ jobs:
             echo "::error title=flutter build ios::${msg}"
           fi
           exit $code
+
+  web-preview:
+    runs-on: ubuntu-latest
+    needs: android
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build a web copy (only for checking the screens)
+        run: |
+          flutter create --platforms=web --org kg.toguz --project-name toguz_korgool . >/dev/null
+          rm -f test/widget_test.dart
+          flutter pub get
+          set +e
+          flutter build web --release --no-web-resources-cdn > web.txt 2>&1 || flutter build web --release > web.txt 2>&1
+          code=$?
+          tail -n 30 web.txt
+          if [ $code -ne 0 ]; then
+            msg=$(grep -vE '^\s*$' web.txt | tail -n 40 | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=flutter build web::${msg}"
+            exit $code
+          fi
+          cd build/web && zip -qr ../../web.zip .
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-latest
+          files: app/web.zip
