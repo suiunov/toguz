@@ -25,6 +25,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -89,8 +90,13 @@ jobs:
         id: apk
         run: |
           set +e
-          flutter build apk --release > build.txt 2>&1
-          code=$?
+          for attempt in 1 2 3; do
+            flutter build apk --release > build.txt 2>&1
+            code=$?
+            [ $code -eq 0 ] && break
+            grep -qE '429|Too Many Requests|Could not GET|timed out' build.txt || break
+            echo "Download server busy, trying again in 60 s (attempt $attempt)"; sleep 60
+          done
           echo "code=$code" >> "$GITHUB_OUTPUT"
           tail -n 60 build.txt
           if [ $code -ne 0 ]; then
