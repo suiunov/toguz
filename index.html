@@ -825,7 +825,12 @@ addEventListener('appinstalled',()=>{$('mInstall').hidden=true});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 /* ---------- player name + online play ---------- */
 // Firebase project settings (public, safe to keep in the page). Fill in to turn online play on.
-const FIREBASE_CONFIG=null;
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyClIGjFSW3B6NGhKBTPNG6rZq4vlru0oLo",
+  authDomain:"toguz-b2978.firebaseapp.com",
+  databaseURL:"https://toguz-b2978-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"toguz-b2978",
+  appId:"1:559994565118:web:d202be72bc1dbc844390af"};
 const FB_SDK='https://www.gstatic.com/firebasejs/12.0.0/';
 const myName=(raw)=>{const n=store.get('tk-name','').trim();return raw?n:(n||T().defName)};
 const cleanName=v=>v.replace(/[<>&"]/g,'').replace(/\s+/g,' ').trim().slice(0,16);
