@@ -235,6 +235,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
         padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
         child: Text(t.previewSub, style: const TextStyle(fontSize: 13, color: C.soft, height: 1.4)),
       ),
+      _lbl(t.nums),
+      Seg<bool>(values: const [true, false], value: c.showNums, label: (v) => v ? t.on : t.off, onChanged: c.setShowNums),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+        child: Text(t.numsSub, style: const TextStyle(fontSize: 13, color: C.soft, height: 1.4)),
+      ),
       _lbl(t.taskProgress),
       _item(Icons.delete_outline, t.resetProgress, () {
         c.resetProgress();

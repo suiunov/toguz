@@ -274,6 +274,7 @@ details{border:1px solid rgba(255,255,255,.08)}
 .cell>.cnt{order:0;min-width:26px;padding:1px 6px;border-radius:999px;text-align:center;font-weight:800;font-size:13px;line-height:1.35;
   background:linear-gradient(#f6cf62,#e1a62b);color:#3b1d05;box-shadow:0 2px 0 rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
 .cell>.cnt{min-height:20px}
+.cell>.cnt.hid{visibility:hidden}
 .cell>.cnt.tz{background:none;box-shadow:none;color:var(--gold);font-size:15px}.cell>.cnt.tz.p1{color:var(--blue)}
 .row.idle .cell>.cnt{opacity:.55}
 /* tuzdyk: gold frame, glow, crown, TUZ, star (blue for the top player) */
@@ -388,6 +389,9 @@ details{border:1px solid rgba(255,255,255,.08)}
     <div class="lbl" data-t="preview"></div>
     <div class="seg" id="segAim"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
     <p class="note" data-t="previewSub"></p>
+    <div class="lbl" data-t="nums"></div>
+    <div class="seg" id="segNums"><button data-v="1" data-t="on"></button><button data-v="0" data-t="off"></button></div>
+    <p class="note" data-t="numsSub"></p>
     <div class="lbl" data-t="taskProgress"></div>
     <button class="mi" id="mReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-t="resetProgress"></span><em id="resetNote"></em></button>
   </div>
@@ -423,7 +427,7 @@ const TX={
 ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка',playAgain:'Кайра ойноо',pause:'Тыным',play:'Ойнотуу',step:'Бир жүрүш ›',speed:'Ылдамдык',
   speeds:['Өтө жай','Жай','Орто','Тез','Дароо'],modes:{ai:'Компьютерге каршы','2p':'2 оюнчу',online:'Онлайн',cc:'Компьютер өзү ойнойт'},levels:{1:'Жеңил',4:'Орто',8:'Оор',99:'Чебер',100:'Улуу чебер'},modeSub:{ai:'Компьютер менен беттеш','2p':'Бир телефондо экөө',online:'Досуң менен интернет аркылуу',cc:'Компьютерлердин беттешин көрүү'},
   menu:'Меню',mode:'Оюн түрү',level:'Деңгээл',tasks:'Тапшырмалар',rules:'Эрежелер',settings:'Жөндөөлөр',install:'Телефонго орнотуу',about:'Оюн жөнүндө',
-  language:'Тил',on:'Күйүк',off:'Өчүк',sound:'Үн',preview:'Жүрүштү алдын ала көрүү',previewSub:'Акыркы коргоол түшө турган үй жашыл жарык менен көрүнөт. Компьютерде чычканды үйгө алып барыңыз, телефондо үйдү басып кармаңыз.',hintBtn:'Кеңеш',allTasks:'Бардык тапшырмалар',tasklist:'Тапшырмалар',lv:['Башталгыч','Орто','Татаал','Чебер'],hintCap:(h,x)=>`Каршылаштын ${h}-үйүн караңыз (азыр ${x} коргоол). Акыркы коргоолу так ошол жерге түшө турган үйүңүздү табыңыз.`,hintTuz:(h,x)=>`Каршылаштын ${h}-үйүндө ${x} коргоол бар — дагы бир коргоол түшсө, 3 болот.`,hintUse:h=>`Туздугуңуз — каршылаштын ${h}-үйү. Ал аркылуу өтүп, анан дагы жуп сан түзгөн жүрүштү издеңиз.`,names:['Биринчи түшүм','Так сокку','Жашыруун олжо','Эң чоң олжо','Алыс сокку','Туздук ачуу','Туздук издөө','Туздук түтүгү','Акыркы сокку','Чебердин эсеби'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
+  language:'Тил',on:'Күйүк',off:'Өчүк',nums:'Сандарды көрсөтүү',numsSub:'Өчүрсөңүз, үйлөрдөгү сандар жашырылат. Чемпионаттагыдай коргоолдорду көз менен санап, эсиңизде сактаганды үйрөнөсүз.',sound:'Үн',preview:'Жүрүштү алдын ала көрүү',previewSub:'Акыркы коргоол түшө турган үй жашыл жарык менен көрүнөт. Компьютерде чычканды үйгө алып барыңыз, телефондо үйдү басып кармаңыз.',hintBtn:'Кеңеш',allTasks:'Бардык тапшырмалар',tasklist:'Тапшырмалар',lv:['Башталгыч','Орто','Татаал','Чебер'],hintCap:(h,x)=>`Каршылаштын ${h}-үйүн караңыз (азыр ${x} коргоол). Акыркы коргоолу так ошол жерге түшө турган үйүңүздү табыңыз.`,hintTuz:(h,x)=>`Каршылаштын ${h}-үйүндө ${x} коргоол бар — дагы бир коргоол түшсө, 3 болот.`,hintUse:h=>`Туздугуңуз — каршылаштын ${h}-үйү. Ал аркылуу өтүп, анан дагы жуп сан түзгөн жүрүштү издеңиз.`,names:['Биринчи түшүм','Так сокку','Жашыруун олжо','Эң чоң олжо','Алыс сокку','Туздук ачуу','Туздук издөө','Туздук түтүгү','Акыркы сокку','Чебердин эсеби'],taskProgress:'Тапшырмалар',resetProgress:'Жыйынтыкты тазалоо',resetDone:'Тазаланды',
   welcome:'Кош келиңиз!',nameAsk:'Атыңызды жазыңыз. Башка оюнчулар ушул атты көрөт.',start:'Ойноо',yourName:'Атыңыз',defName:'Оюнчу',
   create:'Оюн түзүү',join:'Кошулуу',codeIn:'Досуңуздун коду',orJoin:'же досуңуздун оюнуна кошулуңуз',shareTxt:'Бул кодду досуңузга жөнөтүңүз',share:'Бөлүшүү',copied:'Көчүрүлдү',
   waitFriend:'Досуңуз күтүлүүдө…',connecting:'Туташууда…',cancel:'Жокко чыгаруу',leave:'Оюндан чыгуу',playingWith:n=>`${n} менен ойноп жатасыз`,change:'Өзгөртүү',
@@ -460,7 +464,7 @@ ky:{title:'Тогуз коргоол',newGame:'Жаңы оюн',undo:'Артка
 en:{title:'Toguz Korgool',newGame:'New game',undo:'Undo',playAgain:'Play again',pause:'Pause',play:'Play',step:'One move ›',speed:'Speed',
   speeds:['Very slow','Slow','Normal','Fast','Instant'],modes:{ai:'vs Computer','2p':'2 players',online:'Online',cc:'Computer vs computer'},levels:{1:'Easy',4:'Medium',8:'Hard',99:'Master',100:'Grandmaster'},modeSub:{ai:'Challenge the computer','2p':'Two people, one phone',online:'Play a friend over the internet',cc:'Watch the computers play'},
   menu:'Menu',mode:'Game mode',level:'Difficulty',tasks:'Tasks',rules:'Rules',settings:'Settings',install:'Install app',about:'About',
-  language:'Language',on:'On',off:'Off',sound:'Sound',preview:'Landing preview',previewSub:'The hole where your last stone will land glows green. On a computer, hover over a hole; on a phone, press and hold it.',hintBtn:'Hint',allTasks:'All tasks',tasklist:'Tasks',lv:['Beginner','Intermediate','Advanced','Master'],hintCap:(h,x)=>`Look at the opponent\u2019s hole ${h} (${x} stones now). Which of your holes drops its last stone right there?`,hintTuz:(h,x)=>`The opponent\u2019s hole ${h} has ${x} stones — one more makes 3.`,hintUse:h=>`Your tuzdyk is the opponent\u2019s hole ${h}. Find a move that passes through it and still makes an even number.`,names:['First Harvest','Clean Shot','Hidden Prize','Biggest Haul','Long-Range Strike','Open a Tuzdyk','Tuzdyk Hunt','Tuz Pipeline','Final Blow','Master\u2019s Calculation'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
+  language:'Language',on:'On',off:'Off',nums:'Show numbers',numsSub:'Turn off to hide the count on each hole. Like at a championship, you learn to count the stones by eye and keep track in your head.',sound:'Sound',preview:'Landing preview',previewSub:'The hole where your last stone will land glows green. On a computer, hover over a hole; on a phone, press and hold it.',hintBtn:'Hint',allTasks:'All tasks',tasklist:'Tasks',lv:['Beginner','Intermediate','Advanced','Master'],hintCap:(h,x)=>`Look at the opponent\u2019s hole ${h} (${x} stones now). Which of your holes drops its last stone right there?`,hintTuz:(h,x)=>`The opponent\u2019s hole ${h} has ${x} stones — one more makes 3.`,hintUse:h=>`Your tuzdyk is the opponent\u2019s hole ${h}. Find a move that passes through it and still makes an even number.`,names:['First Harvest','Clean Shot','Hidden Prize','Biggest Haul','Long-Range Strike','Open a Tuzdyk','Tuzdyk Hunt','Tuz Pipeline','Final Blow','Master\u2019s Calculation'],taskProgress:'Tasks',resetProgress:'Reset progress',resetDone:'Cleared',
   welcome:'Welcome!',nameAsk:'Enter your name. Other players will see it.',start:'Play',yourName:'Your name',defName:'Player',
   create:'Create game',join:'Join',codeIn:'Friend’s code',orJoin:'or join a friend’s game',shareTxt:'Send this code to your friend',share:'Share',copied:'Copied',
   waitFriend:'Waiting for your friend…',connecting:'Connecting…',cancel:'Cancel',leave:'Leave game',playingWith:n=>`Playing with ${n}`,change:'Change',
@@ -602,7 +606,7 @@ function sfx(k){if(!sound)return;try{
 addEventListener('pointerdown',()=>{if(sound)ac()},{once:true});
 
 /* ---------- game screen ---------- */
-let tut=null,paused=false,aimOn=store.get('tk-aim','1')==='1',aimFrom=-1;
+let tut=null,paused=false,aimOn=store.get('tk-aim','1')==='1',aimFrom=-1,showNums=store.get('tk-nums','1')==='1';
 const landing=(s,i)=>{const n=s.b[i];return n===1?(i+1)%18:(i+n-1)%18};
 /* one speed for every mode: [ms per stone, pause between turns (computer vs computer), pause before the computer answers you] */
 const SPEEDS=[[650,3000,1500],[380,2000,1100],[200,1200,800],[70,1000,450],[0,700,400]];
@@ -621,7 +625,7 @@ function holeHTML(i){
   const inner=own>=0?TZMARK.replace('{t}',T().tuzLbl):stonesHTML(n,i===land,i);
   const who=Math.floor(i/9)===0?names()[0]:names()[1];
   const btn=`<button class="${cls}" data-i="${i}" ${canClick?'':'tabindex="-1"'} aria-label="${T().hole(who,i%9+1,n,own>=0)}">${inner}</button>`;
-  const cnt=`<span class="cnt${own>=0?' tz p'+own:''}">${own>=0?T().tz:n}</span>`;
+  const cnt=own<0&&!showNums?'<span class="cnt hid" aria-hidden="true"></span>':`<span class="cnt${own>=0?' tz p'+own:''}">${own>=0?T().tz:n}</span>`;
   return `<div class="cell ${i>=9?'ct':'cb'}">${i>=9?btn+cnt:cnt+btn}</div>`;
 }
 const TZMARK='<span class="tzmark"><svg viewBox="0 0 24 20" aria-hidden="true"><path d="M2 6l4 9h12l4-9-6 4.5L12 1 8 10.5z" fill="currentColor"/><rect x="5" y="16.5" width="14" height="2.5" rx="1" fill="currentColor"/></svg><b>{t}</b><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 16.9 6.1 20l1.2-6.5L2.5 8.9 9.1 8z" fill="currentColor"/></svg></span>';
@@ -780,7 +784,7 @@ function applyLang(){const t=T();document.documentElement.lang=lang;document.tit
   document.querySelectorAll('#segSpeed button').forEach(b=>b.textContent=t.speeds[+b.dataset.v]);setSeg('segSpeed',spd);
   $('rulesList').innerHTML=t.rulesL.map(x=>`<li>${x}</li>`).join('');$('aboutTxt').textContent=t.aboutT;
   $('menuBtn').setAttribute('aria-label',t.menu);$('newTop').setAttribute('aria-label',t.newGame);
-  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segSound',sound?1:0);setSeg('segAim',aimOn?1:0);
+  setSeg('segMode',mode);setSeg('segLevel',level);setSeg('segLang',lang);setSeg('segSound',sound?1:0);setSeg('segAim',aimOn?1:0);setSeg('segNums',showNums?1:0);
   $('undoBtn').setAttribute('aria-label',t.undo);
   $('levelBox').hidden=mode==='2p'||mode==='online';$('nameSet').value=myName(true);
   if($('drawer').classList.contains('show'))showView(view);
@@ -794,6 +798,7 @@ $('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.da
 $('segLevel').onclick=e=>{const b=e.target.closest('button');if(!b)return;level=+b.dataset.v;store.set('tk-level',level);applyLang()};
 $('segLang').onclick=e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.v;store.set('tk-lang',lang);applyLang()};
 $('segSound').onclick=e=>{const b=e.target.closest('button');if(!b)return;sound=b.dataset.v==='1';store.set('tk-sound',sound?'1':'0');applyLang();sfx('ok')};
+$('segNums').onclick=e=>{const b=e.target.closest('button');if(!b)return;showNums=b.dataset.v==='1';store.set('tk-nums',showNums?'1':'0');applyLang()};
 $('segAim').onclick=e=>{const b=e.target.closest('button');if(!b)return;aimOn=b.dataset.v==='1';store.set('tk-aim',aimOn?'1':'0');aimFrom=-1;applyLang()};
 $('mReset').onclick=()=>{solved=[];store.set('tk-solved','[]');showView('settings');$('resetNote').textContent=T().resetDone;if(tut)showTut()};
 

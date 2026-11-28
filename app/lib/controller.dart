@@ -44,7 +44,7 @@ class GameController extends ChangeNotifier {
   int level = 4;
   int speed = 1;
   String lang = 'ky';
-  bool sound = true, vibrate = true, aimOn = true;
+  bool sound = true, vibrate = true, aimOn = true, showNums = true;
   bool busy = false, paused = false, thinking = false;
   int last = -1, land = -1, aimFrom = -1;
   final List<String> bubble = ['', '']; // last move text per player
@@ -70,6 +70,7 @@ class GameController extends ChangeNotifier {
     sound = _prefs.getBool('sound') ?? true;
     vibrate = _prefs.getBool('vibrate') ?? true;
     aimOn = _prefs.getBool('aim') ?? true;
+    showNums = _prefs.getBool('nums') ?? true;
     final sv = _prefs.getString('solved');
     if (sv != null) {
       final l = (jsonDecode(sv) as List).cast<bool>();
@@ -90,6 +91,7 @@ class GameController extends ChangeNotifier {
     _prefs.setBool('sound', sound);
     _prefs.setBool('vibrate', vibrate);
     _prefs.setBool('aim', aimOn);
+    _prefs.setBool('nums', showNums);
     _prefs.setString('solved', jsonEncode(solved));
   }
 
@@ -340,6 +342,12 @@ class GameController extends ChangeNotifier {
   void setAimOn(bool v) {
     aimOn = v;
     aimFrom = -1;
+    _save();
+    notifyListeners();
+  }
+
+  void setShowNums(bool v) {
+    showNums = v;
     _save();
     notifyListeners();
   }

@@ -116,7 +116,9 @@ class _HoleCell extends StatelessWidget {
             child: Text(c.t.tz,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: own == 1 ? C.blue : C.gold)),
           )
-        : Container(
+        : !c.showNums
+            ? const SizedBox(height: 20)
+            : Container(
             height: 20,
             constraints: const BoxConstraints(minWidth: 26),
             padding: const EdgeInsets.symmetric(horizontal: 6),
